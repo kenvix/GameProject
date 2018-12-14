@@ -4,8 +4,10 @@
 #include <cerrno>
 #include <minwindef.h>
 #include <io.h>
+#include <cstdlib>
 #include <direct.h>
 #include <xutility>
+#include "global.h"
 #define F_OK 0
 
 /**
@@ -99,7 +101,7 @@ inline GameRound* db_read_round(FILE* file, FILE* index, unsigned* _num) {
 }
 
 inline GamePlayer* db_read_player(FILE* file) {
-	GamePlayer* buffer = (GamePlayer*) sizeof(GamePlayer);
+	GamePlayer* buffer = (GamePlayer*) malloc(sizeof(GamePlayer));
 	fread_s(buffer, sizeof(GamePlayer), sizeof(GamePlayer), 1, file);
 	fseek(file, sizeof(GamePlayer), SEEK_SET);
 	buffer->name = (char*) malloc(buffer->name_length + 2);
