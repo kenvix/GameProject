@@ -136,6 +136,7 @@ exit 0</Command>
     </Image>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="library\function.h" />
     <ClInclude Include="library\global.h" />
     <ClInclude Include="library\view.h" />
   </ItemGroup>

@@ -34,5 +34,8 @@
     <ClInclude Include="library\global.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="library\function.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
