@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameProject", "GameProject\GameProject.vcxproj", "{0E03744F-DC08-4A30-8F9B-A6FC5A398A86}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E03744F-DC08-4A30-8F9B-A6FC5A398A86}.Debug|x64.ActiveCfg = Debug|x64
+		{0E03744F-DC08-4A30-8F9B-A6FC5A398A86}.Debug|x64.Build.0 = Debug|x64
+		{0E03744F-DC08-4A30-8F9B-A6FC5A398A86}.Debug|x86.ActiveCfg = Debug|Win32
+		{0E03744F-DC08-4A30-8F9B-A6FC5A398A86}.Debug|x86.Build.0 = Debug|Win32
+		{0E03744F-DC08-4A30-8F9B-A6FC5A398A86}.Release|x64.ActiveCfg = Release|x64
+		{0E03744F-DC08-4A30-8F9B-A6FC5A398A86}.Release|x64.Build.0 = Release|x64
+		{0E03744F-DC08-4A30-8F9B-A6FC5A398A86}.Release|x86.ActiveCfg = Release|Win32
+		{0E03744F-DC08-4A30-8F9B-A6FC5A398A86}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FBA48868-A4FB-4A14-BAF3-DF17580EE728}
+	EndGlobalSection
+EndGlobal
