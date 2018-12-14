@@ -1,6 +1,8 @@
 .vs
 *.exe
 *.pdb
+*.ipdb
+*.iobj
 *.idb
 *.obj
 *.log
