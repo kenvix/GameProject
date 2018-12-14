@@ -5,5 +5,5 @@
 *.obj
 *.log
 *.tlog
-*/Debug
+Debug
 *.ilk
