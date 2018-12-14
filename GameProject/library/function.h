@@ -10,6 +10,14 @@
 #include "global.h"
 #define F_OK 0
 
+inline char* cat(const char* a, const char* b) {
+	const unsigned buffer_size = sizeof(char) * (strlen(a) * strlen(b) + 2);
+	char* buffer = (char*) malloc(buffer_size);
+	strcpy_s(buffer, buffer_size, a);
+	strcat_s(buffer, buffer_size, b);
+	return buffer;
+}
+
 /**
  * 判断文件夹是否存在
  */
@@ -104,8 +112,9 @@ inline GamePlayer* db_read_player(FILE* file) {
 	GamePlayer* buffer = (GamePlayer*) malloc(sizeof(GamePlayer));
 	fread_s(buffer, sizeof(GamePlayer), sizeof(GamePlayer), 1, file);
 	fseek(file, sizeof(GamePlayer), SEEK_SET);
-	buffer->name = (char*) malloc(buffer->name_length + 2);
-	fgets(buffer->name, buffer->name_length, file);
+	buffer->name = (char*) calloc(1, buffer->name_length + 2);
+	if(buffer->name_length >= 0)
+		fgets(buffer->name, buffer->name_length, file);
 	return buffer;
 }
 

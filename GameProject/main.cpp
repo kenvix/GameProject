@@ -5,6 +5,7 @@
 #include "library/global.h"
 #include "library/function.h"
 #include <cstring>
+#include "screen/page/first.h"
 
 GamePlayer* player = nullptr;
 GameRound* rounds_basic = nullptr;
@@ -12,7 +13,6 @@ unsigned rounds_num = 0;
 
 int main(int argc, char* argv[]) {
 	create_window();
-	put_background();
 	if(!dir_exists("data"))
 		create_directory("data");
 	FILE* file_player = nullptr;
@@ -23,6 +23,8 @@ int main(int argc, char* argv[]) {
 	db_init("data/rounds_index.dat", &file_rounds_index);
 	rounds_basic = db_read_round(file_rounds_basic, file_rounds_index, &rounds_num);
 	player = db_read_player(file_player);
+	if(strlen(player->name) <= 0)
+		show_first();
 	getchar();
 	return 0;
 }
