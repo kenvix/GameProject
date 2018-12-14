@@ -128,12 +128,16 @@ exit 0</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="screen\first.cpp" />
+    <ClCompile Include="screen\page\first.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="resource\background\global_background.jpg">
       <DeploymentContent>true</DeploymentContent>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="library\global.h" />
+    <ClInclude Include="library\view.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
