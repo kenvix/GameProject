@@ -60,7 +60,7 @@ inline void draw_player_info() {
 	loadimage(&img, _T("resource/image/player.jpg"));
 	putimage(10, WINDOW_HEIGHT - 50, &img);
 	RECT r1 = {60, WINDOW_HEIGHT - 50, WINDOW_WIDTH, WINDOW_HEIGHT};
-	settextstyle(18, 0, _T("Candara"));
+	settextstyle(18, 0, _T("Consolas"));
 	drawtext(_T(player->name), &r1, DT_SINGLELINE);
 	RECT r2 = {60, WINDOW_HEIGHT - 30, WINDOW_WIDTH, WINDOW_HEIGHT};
 	char info[300];

@@ -120,7 +120,7 @@ inline GamePlayer* db_read_player(FILE* file) {
 	fseek(file, sizeof(GamePlayer), SEEK_SET);
 	buffer->name = (char*) calloc(1, buffer->name_length + 2);
 	if(buffer->name_length > 0)
-		fgets(buffer->name, buffer->name_length, file);
+		fgets(buffer->name, buffer->name_length+1, file);
 	return buffer;
 }
 
