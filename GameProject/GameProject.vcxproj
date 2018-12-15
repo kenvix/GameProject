@@ -137,6 +137,7 @@ exit 0</Command>
       <FileType>CCode</FileType>
     </ClInclude>
     <ClInclude Include="library\view.h" />
+    <ClInclude Include="screen\page\index.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

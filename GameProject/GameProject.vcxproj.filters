@@ -32,7 +32,11 @@
     <ClInclude Include="library\function.h">
       <Filter>头文件</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="screen\page\index.h">
+=======
     <ClInclude Include="library\music.h">
+>>>>>>> b96fbccfe9eef93dc9ddfe325c04a936175dbd93
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
