@@ -11,6 +11,9 @@
 #include "global.h"
 #define F_OK 0
 
+/**
+ * 连接字符串
+ */
 inline char* cat(const char* a, const char* b) {
 	const unsigned buffer_size = sizeof(char) * (strlen(a) * strlen(b) + 2);
 	char* buffer = (char*) malloc(buffer_size);
@@ -28,7 +31,9 @@ inline bool dir_exists(const char *pszDir) {
 	return (_access(pszDir, 0) == 0);	// io.h
 }
 
-// 创建目录
+/**
+ * 创建目录
+ */
 inline bool create_directory(const char* dir) {
 	if (NULL == dir)
 		return false;
@@ -95,7 +100,7 @@ inline GameRound* db_read_round(FILE* file, FILE* index, unsigned* _num) {
 	fseek(file, 0L, SEEK_END);
 	const long size = ftell(file);
 	fseek(file, 0L, SEEK_SET);
-	GameRound* buffer = (GameRound*) malloc(size);
+	GameRound* buffer = (GameRound*) calloc(1, size);
 	fread_s(buffer, size, size, 1, file);
 	unsigned num = 0;
 	fseek(index, 0L, SEEK_SET);
