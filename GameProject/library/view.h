@@ -1,3 +1,4 @@
+#pragma once
 #ifndef LIBRARY_VIEW
 #define LIBRARY_VIEW
 #include <cstdio>

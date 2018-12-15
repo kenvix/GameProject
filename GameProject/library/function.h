@@ -1,3 +1,4 @@
+#pragma once
 #ifndef LIBRARY_FUNCTION
 #define LIBRARY_FUNCTION
 
@@ -109,11 +110,11 @@ inline GameRound* db_read_round(FILE* file, FILE* index, unsigned* _num) {
 }
 
 inline GamePlayer* db_read_player(FILE* file) {
-	GamePlayer* buffer = (GamePlayer*) malloc(sizeof(GamePlayer));
+	GamePlayer* buffer = (GamePlayer*) calloc(1, sizeof(GamePlayer));
 	fread_s(buffer, sizeof(GamePlayer), sizeof(GamePlayer), 1, file);
 	fseek(file, sizeof(GamePlayer), SEEK_SET);
 	buffer->name = (char*) calloc(1, buffer->name_length + 2);
-	if(buffer->name_length >= 0)
+	if(buffer->name_length > 0)
 		fgets(buffer->name, buffer->name_length, file);
 	return buffer;
 }

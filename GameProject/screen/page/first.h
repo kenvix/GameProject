@@ -1,3 +1,4 @@
+#pragma once
 #ifndef PAGE_FIRST
 #define PAGE_FIRST
 #include "../../library/global.h"

@@ -1,3 +1,4 @@
+#pragma once
 #ifndef LIBRARY_GLOBAL
 #define LIBRARY_GLOBAL
 
