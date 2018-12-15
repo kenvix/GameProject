@@ -32,9 +32,9 @@ int main(int argc, char* argv[]) {
 		player->name_length = strlen(DEFAULT_NAME);
 		db_write_player(file_player, player);
 	}
-	show_index();
+	int selection = show_index();
 	draw_player_info();
-	
+	std::vector<std::string> maps = get_map_list();
 	_getch();
 	fclose(file_player);
 	fclose(file_rounds_index);

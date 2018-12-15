@@ -17,7 +17,7 @@ extern unsigned rounds_num;
  * 创建窗体
  */
 inline HWND create_window() {
-	printf("Initializing graph %dx%d", WINDOW_WIDTH, WINDOW_HEIGHT);
+	printf("Initializing graph %dx%d\n", WINDOW_WIDTH, WINDOW_HEIGHT);
 #ifdef _DEBUG
 		HWND window = initgraph(WINDOW_WIDTH, WINDOW_HEIGHT, SHOWCONSOLE);
 #else 

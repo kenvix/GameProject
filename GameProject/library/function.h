@@ -6,9 +6,11 @@
 #include <minwindef.h>
 #include <io.h>
 #include <cstdlib>
+#include <cstdio>
 #include <direct.h>
 #include <xutility>
 #include "global.h"
+#include <vector>
 #define F_OK 0
 
 /**
@@ -125,27 +127,37 @@ inline GamePlayer* db_read_player(FILE* file) {
 }
 
 /**
+ * 列出地图
  * @return int 地图数量
  */
-inline int get_map_list(char*** list) {
+inline std::vector<std::string> get_map_list() {
 	FILE* file = nullptr;
-	unsigned num = 0;
-	fscanf_s(file, "%u\n", &num);
-	char** list = (char**) calloc(num, sizeof(char*));
-	while (feof(file) == 0) {
-		num++;
-
-	}
-	return num;
+	_finddata_t fileDir;
+	long lfDir;
+	std::vector<std::string> result;
+	intptr_t handle = NULL;
+    intptr_t handle_next = NULL;
+    struct _finddata_t cfile = {0};
+    handle = _findfirst("resource/map/*", &cfile); // 在当前目录下查找文件或子目录；[支持通配符]
+    handle_next = handle;
+    while (handle_next != -1) {
+        if(strncmp(cfile.name, "..", 49) != 0 && strncmp(cfile.name, ".", 49) != 0) {
+	        result.insert(result.begin(), cfile.name);
+			printf("Scanned Map: %s\n", cfile.name);
+        }
+        handle_next = _findnext(handle, &cfile); // 继续查找下一个
+    }
+    _findclose(handle);
+	return result;
 }
 
 /**
  * 获取地图信息
- * @param path 地图文件夹名称，位于music文件夹下
+ * @param path 地图文件夹名称，位于map文件夹下
  */
 inline GameMap* get_map_info(const char* path) {
 	FILE* file = nullptr;
-	errno = fopen_s(&file, cat(cat("resource/", path), "/info.txt"), "r");
+	errno = fopen_s(&file, cat(cat("resource/map/", path), "/info.txt"), "r");
 	GameMap* data = (GameMap*) calloc(1, sizeof(GameMap));
 	data->name = (char*) calloc(50, sizeof(char));
 	data->description = (char*) calloc(100, sizeof(char));
