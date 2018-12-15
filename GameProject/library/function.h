@@ -124,4 +124,36 @@ inline GamePlayer* db_read_player(FILE* file) {
 	return buffer;
 }
 
+/**
+ * @return int 地图数量
+ */
+inline int get_map_list(char*** list) {
+	FILE* file = nullptr;
+	unsigned num = 0;
+	fscanf_s(file, "%u\n", &num);
+	char** list = (char**) calloc(num, sizeof(char*));
+	while (feof(file) == 0) {
+		num++;
+
+	}
+	return num;
+}
+
+/**
+ * 获取地图信息
+ * @param path 地图文件夹名称，位于music文件夹下
+ */
+inline GameMap* get_map_info(const char* path) {
+	FILE* file = nullptr;
+	errno = fopen_s(&file, cat(cat("resource/", path), "/info.txt"), "r");
+	GameMap* data = (GameMap*) calloc(1, sizeof(GameMap));
+	data->name = (char*) calloc(50, sizeof(char));
+	data->description = (char*) calloc(100, sizeof(char));
+	data->path = (char*) calloc(strlen(path) + 2, sizeof(char));
+	data->path = (char*) path;
+	fgets(data->name, 49, file);
+	fgets(data->description, 99, file);
+	return data;
+}
+
 #endif
