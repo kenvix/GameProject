@@ -7,5 +7,4 @@ inline void show_first() {
 	cleanup();
 	put_background("global.jpg");
 }
-
 #endif

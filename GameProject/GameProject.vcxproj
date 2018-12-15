@@ -139,6 +139,7 @@ exit 0</Command>
     <ClInclude Include="library\function.h" />
     <ClInclude Include="library\global.h" />
     <ClInclude Include="library\view.h" />
+    <ClInclude Include="screen\page\index.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
