@@ -131,13 +131,11 @@ exit 0</Command>
     <ClCompile Include="screen\page\first.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resource\background\global_background.jpg">
-      <DeploymentContent>true</DeploymentContent>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="library\function.h" />
     <ClInclude Include="library\global.h" />
+    <ClInclude Include="library\music.h">
+      <FileType>CCode</FileType>
+    </ClInclude>
     <ClInclude Include="library\view.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

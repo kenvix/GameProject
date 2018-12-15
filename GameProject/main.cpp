@@ -6,6 +6,7 @@
 #include "library/function.h"
 #include <cstring>
 #include "screen/page/first.h"
+#include "library/music.h"
 
 GamePlayer* player = nullptr;
 GameRound* rounds_basic = nullptr;
@@ -23,8 +24,12 @@ int main(int argc, char* argv[]) {
 	db_init("data/rounds_index.dat", &file_rounds_index);
 	rounds_basic = db_read_round(file_rounds_basic, file_rounds_index, &rounds_num);
 	player = db_read_player(file_player);
+	music_play("background.mp3");
 	if(strlen(player->name) <= 0)
 		show_first();
 	getchar();
+	fclose(file_player);
+	fclose(file_rounds_index);
+	fclose(file_rounds_basic);
 	return 0;
 }
