@@ -36,4 +36,20 @@ typedef struct {
 	unsigned short difficulty; //等级评定 Easy=0 Normal=1 Hard=2 Chaos=3
 } GameMap;
 
+extern GamePlayer* player;
+extern GameRound* rounds_basic;
+extern unsigned rounds_num;
+
+inline GamePlayer* get_player() {
+	return player;
+}
+
+inline GameRound* get_rounds_basic() {
+	return rounds_basic;
+}
+
+inline unsigned get_rounds_num() {
+	return rounds_num;
+}
+
 #endif

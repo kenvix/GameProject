@@ -2,25 +2,31 @@
 #define PAGE_FIRSTINDEX
 #include "../../library/global.h"
 #include "../../library/view.h"
-// µã»÷¿ªÊ¼ÓÎÏ··µ»Ø 1£»µã»÷ÓÎÏ·¼ÇÂ¼·µ»Ø 2£»
-inline int index_first() {
-	MOUSEMSG Mouse;
-	while (true) {
-	Mouse=GetMouseMsg();//»ñÈ¡Ò»¸öÊó±êµÄĞÅÏ¢
-	if ((Mouse.x >= 400 && Mouse.x <= 600) && (Mouse.y >= 250 && Mouse.y <= 310)) {
-		if (Mouse.mkLButton == WM_LBUTTONDOWN)
-			return 1;
-		//ÅĞ¶ÏÊÇ·ñµã»÷ ¿ªÊ¼ÓÎÏ·
-	}
-	if ((Mouse.x >= 400 && Mouse.x <= 600) && (Mouse.y >= 330 && Mouse.y <= 390)) {
-		if (Mouse.mkLButton == WM_LBUTTONDOWN)
-			return 2;
-		//ÅĞ¶ÏÊÇ·ñµã»÷ ÓÎÏ·¼ÇÂ¼
-	}
-	}
-	FlushMouseMsgBuffer();//Ïû³ıÊó±êĞÅÏ¢
+
+// ç‚¹å‡»å¼€å§‹æ¸¸æˆè¿”å› 1ï¼›ç‚¹å‡»æ¸¸æˆè®°å½•è¿”å› 2ï¼›
+inline int show_index() {
 	cleanup();
 	put_background("index.jpg");
+	draw_player_info();
+	int result;
+	while (true) {
+		const MOUSEMSG Mouse = GetMouseMsg();//è·å–ä¸€ä¸ªé¼ æ ‡çš„ä¿¡æ¯
+		if ((Mouse.x >= 400 && Mouse.x <= 600) && (Mouse.y >= 250 && Mouse.y <= 310)) {
+			if (Mouse.mkLButton) {
+				result = 1;
+				break;
+			}
+			//åˆ¤æ–­æ˜¯å¦ç‚¹å‡» å¼€å§‹æ¸¸æˆ
+		} else if ((Mouse.x >= 400 && Mouse.x <= 600) && (Mouse.y >= 330 && Mouse.y <= 390)) {
+			if (Mouse.mkLButton) {
+				result = 2;
+				break;
+			}
+			//åˆ¤æ–­æ˜¯å¦ç‚¹å‡» æ¸¸æˆè®°å½•
+		}
+	}
+	FlushMouseMsgBuffer();//æ¶ˆé™¤é¼ æ ‡ä¿¡æ¯
+	return result;
 }
 
 #endif
