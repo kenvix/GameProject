@@ -4,15 +4,14 @@
 #define PAGE_FIRSTMAP
 #include "../../library/global.h"
 #include "../../library/view.h"
-/**
- *
- * 点击返回键 返回值为0
- * 点击第一关 返回值为1
- * 点击第二关 返回值为2
- * 点击第三关 返回值为3
- * 点击第四关 返回值为4
- * 点击第五关 返回值为5
- */
+/*
+点击返回键 返回值为0
+点击第一关 返回值为1
+点击第二关 返回值为2
+点击第三关 返回值为3
+点击第四关 返回值为4
+点击第五关 返回值为5
+*/
 inline int show_map() {
 	cleanup();
 	put_background("map.jpg");
@@ -22,35 +21,35 @@ inline int show_map() {
 		const MOUSEMSG Mouse = GetMouseMsg();
 		if ((Mouse.x >= 939 && Mouse.x <= 1011) && (Mouse.y >= 547 && Mouse.y <= 600)) {
 			if (Mouse.mkLButton) {
-				conse= 0;
+				conse = 0;
 				break;
 			}
 		} else {
-			if ((Mouse.x >= 482 && Mouse.x <= 542) && (Mouse.y >= 95 && Mouse.y <= 145)) {
+			if ((Mouse.x >= 488 && Mouse.x <= 552) && (Mouse.y >= 100 && Mousew.y <= 160)) {
 				if (Mouse.mkLButton) {
-					conse= 1;
+					conse = 1;
 					break;
 				}
 			} else {
-				if ((Mouse.x >= 295 && Mouse.x <= 357) && (Mouse.y >= 235 && Mouse.y <= 283)) {
+				if ((Mouse.x >= 676 && Mouse.x <= 738) && (Mouse.y >= 243 && Mousew.y <= 299)) {
 					if (Mouse.mkLButton) {
-						conse= 2;
+						conse = 2;
 						break;
 					}
 				} else {
-					if ((Mouse.x >= 366 && Mouse.x <= 423) && (Mouse.y >= 415 && Mouse.y <= 464)) {
+					if ((Mouse.x >= 600 && Mouse.x <= 661) && (Mouse.y >= 424 && Mousew.y <= 481)) {
 						if (Mouse.mkLButton) {
 							conse = 3;
 							break;
 						}
 					} else {
-						if ((Mouse.x >= 563 && Mouse.x <= 622) && (Mouse.y >= 415 && Mouse.y <= 464)) {
+						if ((Mouse.x >= 382 && Mouse.x <= 442) && (Mouse.y >= 424 && Mousew.y <= 481)) {
 							if (Mouse.mkLButton) {
 								conse = 4;
 								break;
 							}
 						} else {
-							if ((Mouse.x >= 660 && Mouse.x <= 719) && (Mouse.y >= 235 && Mouse.y <= 283)) {
+							if ((Mouse.x >= 307 && Mouse.x <= 371) && (Mouse.y >= 243 && Mousew.y <= 299)) {
 								if (Mouse.mkLButton) {
 									conse = 5;
 									break;
@@ -61,9 +60,8 @@ inline int show_map() {
 				}
 			}
 		}
-			
+		FlushMouseMsgBuffer();
+		return conse;
 	}
-	FlushMouseMsgBuffer();
-	return conse;
 }
 #endif
