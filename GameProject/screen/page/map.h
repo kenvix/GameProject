@@ -27,35 +27,35 @@ inline int show_map() {
 			}
 		}
 		else
-			if ((Mouse.x >= 482 && Mouse.x <= 542) && (Mouse.y >= 95 && Mousew.y <= 145)) {
+			if ((Mouse.x >= 488 && Mouse.x <= 552) && (Mouse.y >= 100 && Mousew.y <= 160)) {
 				if (Mouse.mkLButton) {
 					conse= 1;
 					break;
 				}
 			}
 			else
-				if ((Mouse.x >= 295 && Mouse.x <= 357) && (Mouse.y >= 235 && Mousew.y <= 283)) {
+				if ((Mouse.x >= 676 && Mouse.x <= 738) && (Mouse.y >= 243 && Mousew.y <= 299)) {
 					if (Mouse.mkLButton) {
 						conse= 2;
 						break;
 					}
 				}
 				else
-					if ((Mouse.x >= 366 && Mouse.x <= 423) && (Mouse.y >= 415 && Mousew.y <= 464)) {
+					if ((Mouse.x >= 600 && Mouse.x <= 661) && (Mouse.y >= 424 && Mousew.y <= 481)) {
 						if (Mouse.mkLButton) {
 							conse = 3;
 							break;
 						}
 					}
 					else
-						if ((Mouse.x >= 563 && Mouse.x <= 622) && (Mouse.y >= 415 && Mousew.y <= 464)) {
+						if ((Mouse.x >= 382 && Mouse.x <= 442) && (Mouse.y >= 424 && Mousew.y <= 481)) {
 							if (Mouse.mkLButton) {
 								conse = 4;
 								break;
 							}
 						}
 						else
-							if ((Mouse.x >= 660 && Mouse.x <= 719) && (Mouse.y >= 235 && Mousew.y <= 283)) {
+							if ((Mouse.x >= 307 && Mouse.x <= 371) && (Mouse.y >= 243 && Mousew.y <= 299)) {
 								if (Mouse.mkLButton) {
 									conse = 5;
 									break;
