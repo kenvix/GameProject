@@ -6,6 +6,7 @@
 #include "library/function.h"
 #include <cstring>
 #include "screen/page/first.h"
+#include "screen/page/map.h"
 #include "library/music.h"
 #include "screen/page/index.h"
 #define DEFAULT_NAME (char*) "Unnamed Player"
@@ -32,10 +33,23 @@ int main(int argc, char* argv[]) {
 		player->name_length = strlen(DEFAULT_NAME);
 		db_write_player(file_player, player);
 	}
+	INDEX_NODE:
 	int selection = show_index();
-	draw_player_info();
+	int selected_map;
 	std::vector<std::string> maps = get_map_list();
-	_getch();
+	switch (selection) {
+		case 1:
+			selected_map = show_map();
+			if(selected_map == 0) {
+				goto INDEX_NODE;
+			} else {
+				
+			}
+			break;
+
+		case 2:
+			break;
+	}
 	fclose(file_player);
 	fclose(file_rounds_index);
 	fclose(file_rounds_basic);
