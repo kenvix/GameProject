@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
 	std::vector<std::string> maps = get_map_list();
 	switch (selection) {
 		case 1:
-			selected_map = show_map();
+			selected_map = show_map(maps);
 			if(selected_map == 0) {
 				goto INDEX_NODE;
 			} else {
