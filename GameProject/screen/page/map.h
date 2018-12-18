@@ -21,7 +21,7 @@ inline int show_map(std::vector<std::string> maps) {
 	cleanup();
 	put_background("map.jpg");
 	draw_player_info();
-	int conse = 0;
+	int conse ;
 	bool hover = false;
 	while (true) {
 		const MOUSEMSG Mouse = GetMouseMsg();
