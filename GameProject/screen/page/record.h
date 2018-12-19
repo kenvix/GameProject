@@ -36,12 +36,11 @@ inline void show_record(GamePlayer* player) {
 				role = 1;//打印左边的返回
 				break;
 			}
-			else {
-				if ((Mouse.x >= 915 && Mouse.x <= 957) && (Mouse.y >= 200 && Mouse.y <= 315)) {
-					if (Mouse.mkLButton) {
-						role = 2;//打印右边的返回
-						break;
-					}
+		} else {
+			if ((Mouse.x >= 915 && Mouse.x <= 957) && (Mouse.y >= 200 && Mouse.y <= 315)) {
+				if (Mouse.mkLButton) {
+					role = 2;//打印右边的返回
+					break;
 				}
 			}
 		}
