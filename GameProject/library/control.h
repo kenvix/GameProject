@@ -10,7 +10,7 @@
 
 #define GRADE_PERFECT 0.1
 #define GRADE_GOOD 0.2
-#define GRADE_BAD 0.3
+#define GRADE_BAD 0.5
 
 #define SCORE_PERFECT 100
 #define SCORE_GOOD 50
@@ -55,7 +55,7 @@ inline std::vector<GameControl*> game_read_control(GameMap* map) {
  * @param control 当前的控制数据
  * @param round 当前回合
  * @param time 击打时的相对播放时间
- * @return 击打等级，0=MISS 3=PERFECT
+ * @return 击打等级，1=BAD 2=GOOD 3=PERFECT 0=INVALID
  */
 inline unsigned int game_check_key(GameControl* control, GameRound* round, double time, char key) {
 	double pressed_time = control->time - time;
@@ -71,11 +71,8 @@ inline unsigned int game_check_key(GameControl* control, GameRound* round, doubl
 		round->score += SCORE_BAD;
 
 		return 1;
-	} else {
-		round->score += SCORE_MISS;
-
-		return 0;
 	}
+	return 0;
 }
 
 /**
@@ -86,14 +83,26 @@ inline void draw_game_stick(GameControl* control) {
 }
 
 /**
- * 游戏事件循环
+ * 播放游戏背景音乐，并阻塞线程直到开始播放
  */
-inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*> control, unsigned num) {
+inline void game_play_music(GameMap* map) {
+	music_stop();
+	music_play(map->path, "map", true);
+}
+
+/**
+ * 游戏事件循环
+ * @param map 地图对象
+ * @param control 控制向量
+ */
+inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*> control) {
 	GameRound* round = (GameRound*) calloc(1, sizeof(GameRound));
 	std::map<char, std::vector<GameControl*>> accepting_keys;
 	for (const char game_key : game_keys)
 		accepting_keys[game_key] = std::vector<GameControl*>();
-	
+
+	game_play_music(map);
+	//ready to start timer
 	for (unsigned time = 0; time < map->time; time += 0.015) {
 		unsigned control_size = control.size();
 		if(control_size > 0) {
@@ -105,11 +114,26 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*> contro
 				target.insert(target.begin(), head_control);
 			}
 		}
+		for (const char game_key : game_keys) {
+			std::vector<GameControl*> querying_accepting_keys = accepting_keys[game_key];
+			if(!querying_accepting_keys.empty()) {
+				if(time - querying_accepting_keys[querying_accepting_keys.size()-1]->time > GRADE_BAD) {
+					querying_accepting_keys.pop_back();
+					//TODO: STATUS MISS
+					round->score += SCORE_MISS;
+				}
+			}
+		}
 		if(_kbhit() != 0) {
 			int key = _getch();
 			if(is_valid_key(key)) {
 				key = get_game_key(key);
-				game_check_key(head_control, round, key);
+				if(!accepting_keys[key].empty()) {
+					GameControl* current_control = accepting_keys[key][accepting_keys[key].size()-1];
+					if(abs(time - current_control->time) < GRADE_BAD) {
+						game_check_key(current_control, round, time, key); //TODO: Play efforts for bad/good/perfect
+					}
+				}
 			}
 		}
 		Sleep(15);

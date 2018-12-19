@@ -9,6 +9,8 @@
 #include "screen/page/map.h"
 #include "library/music.h"
 #include "screen/page/index.h"
+#include "screen/page/record.h"
+#include "screen/page/game.h"
 #define DEFAULT_NAME (char*) "Unnamed Player"
 
 GamePlayer* player = nullptr;
@@ -43,11 +45,13 @@ int main(int argc, char* argv[]) {
 			if(selected_map == 0) {
 				goto INDEX_NODE;
 			} else {
-				
+				show_game(get_map_info(maps[selected_map-1].c_str()));
 			}
 			break;
 
 		case 2:
+			show_record(player);
+			goto INDEX_NODE;
 			break;
 	}
 	fclose(file_player);

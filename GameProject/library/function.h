@@ -17,7 +17,7 @@
  * 连接字符串
  */
 inline char* cat(const char* a, const char* b) {
-	const unsigned buffer_size = sizeof(char) * (strlen(a) * strlen(b) + 2);
+	const unsigned buffer_size = (unsigned) sizeof(char) * (strlen(a) * strlen(b) + 2);
 	char* buffer = (char*) malloc(buffer_size);
 	strcpy_s(buffer, buffer_size, a);
 	strcat_s(buffer, buffer_size, b);
