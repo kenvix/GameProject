@@ -19,15 +19,18 @@ inline void show_record(GamePlayer* player) {
 	rect = { 484,35,WINDOW_WIDTH,WINDOW_HEIGHT };
 	drawtext(_T("8888888"), &rect, DT_SINGLELINE);
 
-	rect = { 783,15,WINDOW_WIDTH,WINDOW_HEIGHT };
+	rect = { 740,15,WINDOW_WIDTH,WINDOW_HEIGHT };
 	drawtext(_T("Experience"), &rect, DT_SINGLELINE);
+	rect = { 740,35,WINDOW_WIDTH,WINDOW_HEIGHT };
+	drawtext(_T("9999"),&rect, DT_SINGLELINE );
+
 	rect = { 183,116,WINDOW_WIDTH,WINDOW_HEIGHT };
 	drawtext(_T("peng"), &rect, DT_SINGLELINE);
-	rect = { 183,224,WINDOW_WIDTH,WINDOW_HEIGHT };
+	rect = { 183,221,WINDOW_WIDTH,WINDOW_HEIGHT };
 	drawtext(_T("lu"), &rect, DT_SINGLELINE);
-	rect = { 183,338,WINDOW_WIDTH,WINDOW_HEIGHT };
+	rect = { 183,333,WINDOW_WIDTH,WINDOW_HEIGHT };
 	drawtext(_T("Rui"), &rect, DT_SINGLELINE);
-	rect = { 183,448,WINDOW_WIDTH,WINDOW_HEIGHT };
+	rect = { 183,440,WINDOW_WIDTH,WINDOW_HEIGHT };
 	drawtext(_T("feng"), &rect, DT_SINGLELINE);
 	while (true) {
 		const MOUSEMSG Mouse = GetMouseMsg();
