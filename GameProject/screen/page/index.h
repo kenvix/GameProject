@@ -5,7 +5,6 @@
 
 // 点击开始游戏返回 1；点击游戏记录返回 2；
 inline int show_index() {
-	cleanup();
 	put_background("index.jpg");
 	draw_player_info();
 	int result;

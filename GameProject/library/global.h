@@ -19,7 +19,7 @@ typedef struct {
  */
 typedef struct {
 	unsigned int max_combo; //这局最大连击次数
-	unsigned int max_score; //这局得分
+	unsigned int score; //这局得分
 	unsigned int time; //何时开始的游戏（UNIX TIMESTAMP）
 	unsigned short level; //等级评定 S=0 A=1 B=2 C=3 D=4
 	char* map; //Map Internal Path
@@ -33,8 +33,17 @@ typedef struct {
 	char* path; //Map Internal Path
 	char* name;
 	char* description;
+	double time; //地图时间长度 
 	unsigned short difficulty; //等级评定 Easy=0 Normal=1 Hard=2 Chaos=3
 } GameMap;
+
+/**
+ * 过程控制
+ */
+typedef struct {
+	double time; //秒数，0.001即为1ms
+	unsigned key; //按键ID
+} GameControl;
 
 extern GamePlayer* player;
 extern GameRound* rounds_basic;

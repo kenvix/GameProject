@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
 	}
 	INDEX_NODE:
 	int selection = show_index();
-	int selected_map;
+	int selected_map = -1;
 	std::vector<std::string> maps = get_map_list();
 	switch (selection) {
 		case 1:

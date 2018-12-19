@@ -131,6 +131,7 @@ exit 0</Command>
     <ClCompile Include="screen\page\first.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="library\control.h" />
     <ClInclude Include="library\function.h" />
     <ClInclude Include="library\global.h" />
     <ClInclude Include="library\music.h">

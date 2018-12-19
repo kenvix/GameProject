@@ -162,10 +162,73 @@ inline GameMap* get_map_info(const char* path) {
 	data->name = (char*) calloc(50, sizeof(char));
 	data->description = (char*) calloc(100, sizeof(char));
 	data->path = (char*) calloc(strlen(path) + 2, sizeof(char));
-	data->path = (char*) path;
+	strncpy_s(data->path, strlen(path)+1, path, strlen(path)+1);
+	int minute;
+	double second;
+	fscanf_s(file, "%d:%lf\n", &minute, &second);
+	data->time = (double) minute * 60 + second;
 	fgets(data->name, 49, file);
 	fgets(data->description, 99, file);
 	return data;
+}
+
+inline char* get_difficulty(unsigned short difficulty) {
+	char* result = (char*) calloc(8, sizeof(char));
+	switch (difficulty) { //等级评定 Easy=0 Normal=1 Hard=2 Chaos=3
+		case 0:
+			result = (char*) "Easy";
+			break;
+
+		case 1:
+			result = (char*) "Normal";
+			break;
+
+		case 2:
+			result = (char*) "Hard";
+			break;
+
+		case 3:
+			result = (char*) "Chaos";
+			break;
+	}
+	return result;
+}
+
+/**
+ * 将可能的大写按键转换为小写按键以便匹配
+ */
+inline char get_game_key(char key) {
+	switch (key) {
+		case 'A':
+		case 'a':
+			return 'a';
+			break;
+
+		case 'S':
+		case 's':
+			return 's';
+			break;
+
+		case 'D':
+		case 'd':
+			return 'd';
+			break;
+
+		case 'J':
+		case 'j':
+			return 'j';
+			break;
+
+		case 'K':
+		case 'k':
+			return 'k';
+			break;
+
+		case 'L':
+		case 'l':
+			return 'l';
+			break;
+	}
 }
 
 #endif

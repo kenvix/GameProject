@@ -11,5 +11,6 @@
     <ClInclude Include="library\view.h" />
     <ClInclude Include="screen\page\index.h" />
     <ClInclude Include="screen\page\map.h" />
+    <ClInclude Include="library\control.h" />
   </ItemGroup>
 </Project>
