@@ -44,19 +44,18 @@ inline void draw_map_selection_info(std::vector<std::string> maps, int key) {
 */
 inline int show_map(std::vector<std::string> maps) {
 	draw_map_common_info();
-	int conse = 0;
+	int conse = -1;
+	FlushMouseMsgBuffer();
 	while (true) {
 		const MOUSEMSG Mouse = GetMouseMsg();
 		if ((Mouse.x >= 939 && Mouse.x <= 1011) && (Mouse.y >= 547 && Mouse.y <= 600)) {
 			if (Mouse.mkLButton) {
 				conse = 0;
-				break;
 			}
 		} else {
 			if ((Mouse.x >= 488 && Mouse.x <= 552) && (Mouse.y >= 100 && Mouse.y <= 160)) {
 				if (Mouse.mkLButton) {
 					conse = 1;
-					break;
 				} else if(Mouse.uMsg == WM_MOUSEMOVE) {
 					draw_map_selection_info(maps, 0);
 				}
@@ -64,7 +63,6 @@ inline int show_map(std::vector<std::string> maps) {
 				if ((Mouse.x >= 676 && Mouse.x <= 738) && (Mouse.y >= 243 && Mouse.y <= 299)) {
 					if (Mouse.mkLButton) {
 						conse = 2;
-						break;
 					} else if(Mouse.uMsg == WM_MOUSEMOVE) {
 						draw_map_selection_info(maps, 1);
 					}
@@ -72,7 +70,6 @@ inline int show_map(std::vector<std::string> maps) {
 					if ((Mouse.x >= 600 && Mouse.x <= 661) && (Mouse.y >= 424 && Mouse.y <= 481)) {
 						if (Mouse.mkLButton) {
 							conse = 3;
-							break;
 						}  else if(Mouse.uMsg == WM_MOUSEMOVE) {
 							draw_map_selection_info(maps, 2);
 						}
@@ -80,7 +77,6 @@ inline int show_map(std::vector<std::string> maps) {
 						if ((Mouse.x >= 382 && Mouse.x <= 442) && (Mouse.y >= 424 && Mouse.y <= 481)) {
 							if (Mouse.mkLButton) {
 								conse = 4;
-								break;
 							}  else if(Mouse.uMsg == WM_MOUSEMOVE) {
 								draw_map_selection_info(maps, 3);
 							}
@@ -88,7 +84,6 @@ inline int show_map(std::vector<std::string> maps) {
 							if ((Mouse.x >= 307 && Mouse.x <= 371) && (Mouse.y >= 243 && Mouse.y <= 299)) {
 								if (Mouse.mkLButton) {
 									conse = 5;
-									break;
 								}  else if(Mouse.uMsg == WM_MOUSEMOVE) {
 									draw_map_selection_info(maps, 4);
 								}
@@ -100,6 +95,8 @@ inline int show_map(std::vector<std::string> maps) {
 				}
 			}
 		}
+		if(conse >= 0 && maps.size() >= conse)
+			break;
 	}
 	FlushMouseMsgBuffer();
 	flag_show_map_hover_status = -2;
