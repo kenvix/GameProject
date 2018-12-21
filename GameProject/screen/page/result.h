@@ -54,7 +54,7 @@ inline int show_result(GameRound* round) {
 		else {
 			if ((Mouse.x >= 576 && Mouse.x <= 770) && (Mouse.y >= 365 && Mouse.y <= 406)) {
 				if (Mouse.mkLButton) {
-					no = 2;   //判断是否点击 继续游戏 (CONTINUE)
+					no = 0;   //判断是否点击 继续游戏 (CONTINUE)
 					break;
 				}
 			}
