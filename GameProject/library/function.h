@@ -131,9 +131,6 @@ inline GamePlayer* db_read_player(FILE* file) {
  * @return int 地图数量
  */
 inline std::vector<std::string> get_map_list() {
-	FILE* file = nullptr;
-	_finddata_t fileDir;
-	long lfDir;
 	std::vector<std::string> result;
 	intptr_t handle = NULL;
     intptr_t handle_next = NULL;
@@ -165,9 +162,9 @@ inline GameMap* get_map_info(const char* path) {
 	strncpy_s(data->path, strlen(path)+1, path, strlen(path)+1);
 	int minute;
 	double second;
-	fscanf_s(file, "%d:%lf\n", &minute, &second);
-	data->time = (double) minute * 60 + second;
 	fgets(data->name, 49, file);
+	fscanf_s(file, "\n%d:%lf\n%hu\n", &minute, &second, &data->difficulty);
+	data->time = (double) minute * 60 + second;
 	fgets(data->description, 99, file);
 	return data;
 }
@@ -229,6 +226,7 @@ inline char get_game_key(char key) {
 			return 'l';
 			break;
 	}
+	return '\0';
 }
 
 #endif

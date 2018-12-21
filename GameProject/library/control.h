@@ -103,7 +103,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*> contro
 
 	game_play_music(map);
 	//ready to start timer
-	for (unsigned time = 0; time < map->time; time += 0.015) {
+	for (double time = 0; time < map->time; time += 0.015) {
 		unsigned control_size = control.size();
 		if(control_size > 0) {
 			GameControl* head_control = control[control_size-1];
