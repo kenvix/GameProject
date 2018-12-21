@@ -14,5 +14,6 @@
     <ClInclude Include="library\control.h" />
     <ClInclude Include="screen\page\record.h" />
     <ClInclude Include="screen\page\game.h" />
+    <ClInclude Include="screen\page\result.h" />
   </ItemGroup>
 </Project>

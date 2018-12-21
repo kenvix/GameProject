@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <graphics.h>
-
+#include<conio.h>
 #include "library/view.h"
 #include "library/global.h"
 #include "library/function.h"
