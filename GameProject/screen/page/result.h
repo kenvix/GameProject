@@ -4,10 +4,12 @@
 #include "../../library/global.h"
 #include "../../library/view.h"
 #include<conio.h>
-inline void show_result(GameRound* round,GamePlayer* player) {
+
+extern GamePlayer* player;
+
+inline void show_result(GameRound* round) {
 	int no;
-	// »æÖÆÓÎÏ·½áÊø½çÃæ
-	initgraph(616, 310);
+	// ç»˜åˆ¶æ¸¸æˆç»“æŸç•Œé¢
 	POINT pts[] = { {5,5},{611,5},{611,305},{5,305} };
 	polygon(pts, 4);
 	POINT pot[] = { {59,239},{59,270},{181,270},{181,239} };
@@ -15,44 +17,42 @@ inline void show_result(GameRound* round,GamePlayer* player) {
 	POINT pet[] = { {450,239},{450,270},{573,270},{573,239} };
 	polygon(pet, 4);
 	circle(450, 100, 70);
-	RECT rect = { 65,35,616,310 };
-	drawtext(_T("Total Score:"), &rect, DT_SINGLELINE);
-	rect = { 150,35,616,310 };
-	drawtext(_T(round->score), &rect, DT_SINGLELINE);
+	char* strbuffer = (char*) calloc(133, sizeof(char));
 
-	rect = { 65,70,616,310 };
-	drawtext(_T("Max Combo:"), &rect, DT_SINGLELINE);
-	rect = { 150,70,616,310 };
-	drawtext(_T(round->max_combo), &rect, DT_SINGLELINE);
+	RECT rect = { 65,35, WINDOW_WIDTH, WINDOW_HEIGHT };
+	sprintf_s(strbuffer, 133, "Total Score: %15u", round->score);
+	drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
 
-	rect = { 65,105,616,310 };
-	drawtext(_T("Level:"), &rect, DT_SINGLELINE);
-	rect = { 150,105,616,310 };
-	drawtext(_T(player->level), &rect, DT_SINGLELINE);
+	rect = { 65,70, WINDOW_WIDTH, WINDOW_HEIGHT };
+	sprintf_s(strbuffer, 133, "Max Combo: %17u", round->max_combo);
+	drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
 
-	rect = { 65,140,616,310 };
-	drawtext(_T("Experince:"), &rect, DT_SINGLELINE);
-	rect = { 150,140,616,310 };
-	drawtext(_T(player->experience), &rect, DT_SINGLELINE);
+	rect = { 65,105, WINDOW_WIDTH, WINDOW_HEIGHT };
+	sprintf_s(strbuffer, 133, "Level: %21u", round->max_combo);
+	drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
 
-	rect = { 80,248,616,310 };
+	rect = { 65,140, WINDOW_WIDTH, WINDOW_HEIGHT };
+	sprintf_s(strbuffer, 133, "Experience: %16u", round->max_combo);;
+	drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
+
+	rect = { 80,248, WINDOW_WIDTH, WINDOW_HEIGHT };
 	drawtext(_T("RECORD"), &rect, DT_SINGLELINE);
 
-	rect = { 473,248,616,310 };
+	rect = { 473,248, WINDOW_WIDTH, WINDOW_HEIGHT };
 	drawtext(_T("CONTINUE"), &rect, DT_SINGLELINE);
-	// ²¶×½Êó±êÐÅÏ¢
+	// æ•æ‰é¼ æ ‡ä¿¡æ¯
 	while (true) {
 		const MOUSEMSG Mouse = GetMouseMsg();
 		if ((Mouse.x >= 59 && Mouse.x <= 181) && (Mouse.y >= 239 && Mouse.y <= 270)) {
 			if (Mouse.mkLButton) {
-				no = 1;   //ÅÐ¶ÏÊÇ·ñµã»÷ÓÎÏ·¼ÇÂ¼ (RECORD)
+				no = 1;   //åˆ¤æ–­æ˜¯å¦ç‚¹å‡»æ¸¸æˆè®°å½• (RECORD)
 				break;
 			}
 		}
 		else {
 			if ((Mouse.x >= 450 && Mouse.x <= 573) && (Mouse.y >= 239 && Mouse.y <= 270)) {
 				if (Mouse.mkLButton) {
-					no = 2;   //ÅÐ¶ÏÊÇ·ñµã»÷ ¼ÌÐøÓÎÏ· (CONTINUE)
+					no = 2;   //åˆ¤æ–­æ˜¯å¦ç‚¹å‡» ç»§ç»­æ¸¸æˆ (CONTINUE)
 					break;
 				}
 			}
