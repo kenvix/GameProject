@@ -166,6 +166,11 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 
 	game_play_music(map);
 	//ready to start timer
+	RECT common_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 40, WINDOW_WIDTH, WINDOW_HEIGHT};
+	RECT timer_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 20, WINDOW_WIDTH, WINDOW_HEIGHT};
+	char* timer_buffer = (char*) calloc(100, sizeof(char));
+	settextstyle(18, 0, _T("Consolas"));
+	drawtext(_T(map->name), &common_rect, DT_SINGLELINE);
 	for (double time = 0; time < map->time; time += STICK_STEP_TIME) {
 		unsigned control_size = control->size();
 		if(control_size > 0) {
@@ -197,6 +202,8 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				}
 			}
 		}
+		sprintf_s(timer_buffer, 100, "Time: %8.3lf / %7.2lf", time, map->time);
+		drawtext(_T(timer_buffer), &timer_rect, DT_SINGLELINE);
 		if(_kbhit() != 0) {
 			int key = _getch();
 			if(is_valid_key(key)) {
