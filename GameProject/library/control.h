@@ -21,7 +21,7 @@
 //条子起始位置
 #define STICK_INIT_POSITION 20
 //条子步进长度
-#define STICK_STEP_LENGTH 5
+#define STICK_STEP_LENGTH 3
 //条子提前绘制时间
 #define STICK_ADVANCE_TIME 3
 //条子步进时间
@@ -122,17 +122,25 @@ inline int get_stick_x_position(GameControl* control) {
 /**
  * TODO: 绘制条子
  */
-inline void draw_game_stick(GameControl* control, IMAGE* image) {
+inline void draw_game_stick(GameControl* control, IMAGE* image, IMAGE* cache) {
+	int y = control->position;
+	int x = get_stick_x_position(control);
 	if(control->position == -1) {
 		control->position = STICK_INIT_POSITION;
 		loadimage(image, "resource/image/stick.jpg", STICK_WIDTH, STICK_HEIGHT, true);
-		putimage(0, 0, image);
+		getimage(cache, x, y, STICK_WIDTH, STICK_HEIGHT);
+	} else {
+		putimage(x, y, cache);
 	}
-	control->position += STICK_STEP_LENGTH;
+	y = control->position += STICK_STEP_LENGTH;
+	getimage(cache, x, y, STICK_WIDTH, STICK_HEIGHT);
+	putimage(x, y, image);
+}
+
+inline void hide_game_stick(GameControl* control, IMAGE* cache) {
 	int y = control->position;
 	int x = get_stick_x_position(control);
-	moveto(x,y);
-	
+	putimage(x, y, cache);
 }
 
 /**
@@ -165,8 +173,10 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 			if(head_control->time >= (time - STICK_ADVANCE_TIME)) {
 				control->pop_back();
 				IMAGE image;
-				draw_game_stick(head_control, &image);
+				IMAGE cache;
+				draw_game_stick(head_control, &image, &cache);
 				images[head_control] = image;
+				old_images[head_control] = cache;
 				std::vector<GameControl*>* target = &accepting_keys[head_control->key];
 				target->insert(target->begin(), head_control);
 			}
@@ -179,9 +189,11 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 					querying_accepting_keys->pop_back();
 					//TODO: STATUS MISS
 					round->score += SCORE_MISS;
-					images[object] = NULL;
+					images[object] = NULL;  //destroy invalid images
+					hide_game_stick(object, &old_images[object]);
+					old_images[object] = NULL;
 				} else {
-					draw_game_stick(object, &images[object]);
+					draw_game_stick(object, &images[object], &old_images[object]);
 				}
 			}
 		}
