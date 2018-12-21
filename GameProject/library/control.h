@@ -21,11 +21,11 @@
 //条子起始位置
 #define STICK_INIT_POSITION 20
 //条子步进长度
-#define STICK_STEP_LENGTH 3
+#define STICK_STEP_LENGTH 5.1
 //条子提前绘制时间
 #define STICK_ADVANCE_TIME 3
 //条子步进时间
-#define STICK_STEP_TIME 0.015L
+#define STICK_STEP_TIME 0.015L 
 
 #define STICK_WIDTH 67
 #define STICK_HEIGHT 38
@@ -217,7 +217,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 			}
 		}
 		Sleep(15);
-	}
+ 	}
 	return round;
 }
 #endif
