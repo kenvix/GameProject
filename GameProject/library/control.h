@@ -7,6 +7,7 @@
 #include <conio.h>
 #include <set>
 #include <map>
+#include <unordered_map>
 
 #define GRADE_PERFECT 0.1
 #define GRADE_GOOD 0.2
@@ -16,6 +17,18 @@
 #define SCORE_GOOD 50
 #define SCORE_BAD 0
 #define SCORE_MISS -10
+
+//条子起始位置
+#define STICK_INIT_POSITION 20
+//条子步进长度
+#define STICK_STEP_LENGTH 5
+//条子提前绘制时间
+#define STICK_ADVANCE_TIME 3
+//条子步进时间
+#define STICK_STEP_TIME 0.015L
+
+#define STICK_WIDTH 67
+#define STICK_HEIGHT 38
 
 const char game_valid_keys[] = {'A','S','D','J','K','L','a','s','d','j','k','l'};
 const char game_keys[] = {'a','s','d','j','k','l'};
@@ -41,9 +54,11 @@ inline std::vector<GameControl*> game_read_control(GameMap* map) {
 		char key;
 		fscanf_s(fs, "%d:%lf %c\n", &minute, &second, &key);
 		if(minute != -1) {
-			GameControl* control = (GameControl*) calloc(1, sizeof(GameMap));
+			GameControl* control = (GameControl*) calloc(1, sizeof(GameControl));
 			control->key = key;
 			control->time = (double) minute * 60 + second;
+			control->position = -1;
+			control->image = nullptr;
 			result.insert(result.begin(), control);
 		}
 	}
@@ -75,10 +90,48 @@ inline unsigned int game_check_key(GameControl* control, GameRound* round, doubl
 	return 0;
 }
 
+inline int get_stick_x_position(GameControl* control) {
+	switch (control->key) {
+		case 'a':
+			return 20;
+			break;
+		
+		case 's':
+			return 120;
+			break;
+		
+		case 'd':
+			return 220;
+			break;
+		
+		case 'j':
+			return 320;
+			break;
+		
+		case 'k':
+			return 420;
+			break;
+		
+		case 'l':
+			return 520;
+			break;
+	}
+	return 0;
+}
+
 /**
  * TODO: 绘制条子
  */
-inline void draw_game_stick(GameControl* control) {
+inline void draw_game_stick(GameControl* control, IMAGE* image) {
+	if(control->position == -1) {
+		control->position = STICK_INIT_POSITION;
+		loadimage(image, "resource/image/stick.jpg", STICK_WIDTH, STICK_HEIGHT, true);
+		putimage(0, 0, image);
+	}
+	control->position += STICK_STEP_LENGTH;
+	int y = control->position;
+	int x = get_stick_x_position(control);
+	moveto(x,y);
 	
 }
 
@@ -95,32 +148,40 @@ inline void game_play_music(GameMap* map) {
  * @param map 地图对象
  * @param control 控制向量
  */
-inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*> control) {
+inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* control) {
 	GameRound* round = (GameRound*) calloc(1, sizeof(GameRound));
 	std::map<char, std::vector<GameControl*>> accepting_keys;
+	std::unordered_map<GameControl*, IMAGE> images;
+	std::unordered_map<GameControl*, IMAGE> old_images;
 	for (const char game_key : game_keys)
 		accepting_keys[game_key] = std::vector<GameControl*>();
 
 	game_play_music(map);
 	//ready to start timer
-	for (double time = 0; time < map->time; time += 0.015) {
-		unsigned control_size = control.size();
+	for (double time = 0; time < map->time; time += STICK_STEP_TIME) {
+		unsigned control_size = control->size();
 		if(control_size > 0) {
-			GameControl* head_control = control[control_size-1];
-			if(head_control->time >= time) {
-				control.pop_back();
-				draw_game_stick(head_control);
-				std::vector<GameControl*> target = accepting_keys[head_control->key];
-				target.insert(target.begin(), head_control);
+			GameControl* head_control = (*control)[control_size-1];
+			if(head_control->time >= (time - STICK_ADVANCE_TIME)) {
+				control->pop_back();
+				IMAGE image;
+				draw_game_stick(head_control, &image);
+				images[head_control] = image;
+				std::vector<GameControl*>* target = &accepting_keys[head_control->key];
+				target->insert(target->begin(), head_control);
 			}
 		}
 		for (const char game_key : game_keys) {
-			std::vector<GameControl*> querying_accepting_keys = accepting_keys[game_key];
-			if(!querying_accepting_keys.empty()) {
-				if(time - querying_accepting_keys[querying_accepting_keys.size()-1]->time > GRADE_BAD) {
-					querying_accepting_keys.pop_back();
+			std::vector<GameControl*>* querying_accepting_keys = &accepting_keys[game_key];
+			if(!querying_accepting_keys->empty()) {
+				GameControl* object = (*querying_accepting_keys)[querying_accepting_keys->size()-1];
+				if(time - object->time > GRADE_BAD) {
+					querying_accepting_keys->pop_back();
 					//TODO: STATUS MISS
 					round->score += SCORE_MISS;
+					images[object] = NULL;
+				} else {
+					draw_game_stick(object, &images[object]);
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 #pragma once
 #ifndef LIBRARY_GLOBAL
 #define LIBRARY_GLOBAL
+#include <easyx.h>
 
 /**
  * 玩家
@@ -43,6 +44,8 @@ typedef struct {
 typedef struct {
 	double time; //秒数，0.001即为1ms
 	unsigned key; //按键ID
+	int position; //Y Position
+	IMAGE* image;
 } GameControl;
 
 extern GamePlayer* player;

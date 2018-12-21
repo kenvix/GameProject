@@ -4,10 +4,12 @@
 #include "../../library/control.h"
 
 inline void show_game(GameMap* map) {
+	cleanup();
 	put_background("game-hard.jpg");
-	const std::vector<GameControl*> controls = game_read_control(map);
-	GameRound* round = game_event_loop(map, controls);
+	std::vector<GameControl*> controls = game_read_control(map);
+	GameRound* round = game_event_loop(map, &controls);
 	//TODO: 游戏结束评分界面
+
 }
 
 #endif
