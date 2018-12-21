@@ -229,4 +229,24 @@ inline char get_game_key(char key) {
 	return '\0';
 }
 
+inline void get_level_description(unsigned level, char** target) {
+	switch (level) {
+		case 3:
+			*target = (char*) "Perfect";
+			break;
+		
+		case 2:
+			*target = (char*) "Good";
+			break;
+
+		case 1:
+			*target = (char*) "Bad";
+			break;
+
+		default:
+			*target = (char*) "Miss";
+			break;
+	}
+}
+
 #endif

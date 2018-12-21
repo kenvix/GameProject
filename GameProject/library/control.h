@@ -9,21 +9,21 @@
 #include <map>
 #include <unordered_map>
 
-#define GRADE_PERFECT 0.1
-#define GRADE_GOOD 0.2
-#define GRADE_BAD 0.5
+#define GRADE_PERFECT 0.05
+#define GRADE_GOOD 0.1
+#define GRADE_BAD 0.2
 
 #define SCORE_PERFECT 100
 #define SCORE_GOOD 50
 #define SCORE_BAD 0
-#define SCORE_MISS -10
+#define SCORE_MISS -101
 
 //条子起始位置
 #define STICK_INIT_POSITION 20
 //条子步进长度
 #define STICK_STEP_LENGTH 5.9
 //条子提前绘制时间
-#define STICK_ADVANCE_TIME 4
+#define STICK_ADVANCE_TIME 0.87
 //条子步进时间
 #define STICK_STEP_TIME 0.014L 
 
@@ -152,6 +152,19 @@ inline void game_play_music(GameMap* map) {
 }
 
 /**
+ * 绘制击打结果
+ */
+inline void draw_hit_result(GameControl* control, unsigned hit_level) {
+	char* result = (char*) calloc(30, sizeof(char));
+	RECT common_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 60, WINDOW_WIDTH, WINDOW_HEIGHT};
+	settextstyle(18, 0, _T("Consolas"));
+	char* hit_level_description = (char*) calloc(10, sizeof(char));
+	get_level_description(hit_level, &hit_level_description);
+	sprintf_s(result, 30, "%s for %c at %3.2lf", hit_level_description, control->key, control->time);
+	drawtext(_T(result), &common_rect, DT_SINGLELINE);
+}
+
+/**
  * 游戏事件循环
  * @param map 地图对象
  * @param control 控制向量
@@ -175,7 +188,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 		unsigned control_size = control->size();
 		if(control_size > 0) {
 			GameControl* head_control = (*control)[control_size-1];
-			if(head_control->time >= (time - STICK_ADVANCE_TIME)) {
+			if(STICK_ADVANCE_TIME >= (head_control->time - time)) {
 				control->pop_back();
 				IMAGE image;
 				IMAGE cache;
@@ -197,6 +210,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 					images[object] = NULL;  //destroy invalid images
 					hide_game_stick(object, &old_images[object]);
 					old_images[object] = NULL;
+					draw_hit_result(object, 0);
 				} else {
 					draw_game_stick(object, &images[object], &old_images[object]);
 				}
@@ -211,7 +225,9 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				if(!accepting_keys[key].empty()) {
 					GameControl* current_control = accepting_keys[key][accepting_keys[key].size()-1];
 					if(abs(time - current_control->time) < GRADE_BAD) {
-						game_check_key(current_control, round, time, key); //TODO: Play efforts for bad/good/perfect
+						unsigned hit_level = game_check_key(current_control, round, time, key); 
+						//TODO: Play efforts for bad/good/perfect
+						draw_hit_result(current_control, hit_level);
 					}
 				}
 			}
