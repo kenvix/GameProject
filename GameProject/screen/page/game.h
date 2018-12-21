@@ -8,6 +8,7 @@ inline void show_game(GameMap* map) {
 	const std::vector<GameControl*> controls = game_read_control(map);
 	GameRound* round = game_event_loop(map, controls);
 	//TODO: 游戏结束评分界面
+
 }
 
 #endif
