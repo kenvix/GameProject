@@ -9,9 +9,9 @@
 #include <map>
 #include <unordered_map>
 
-#define GRADE_PERFECT 0.05
-#define GRADE_GOOD 0.1
-#define GRADE_BAD 0.2
+#define GRADE_PERFECT 0.2
+#define GRADE_GOOD 0.3
+#define GRADE_BAD 0.5
 
 #define SCORE_PERFECT 100
 #define SCORE_GOOD 50
@@ -225,7 +225,11 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				if(!accepting_keys[key].empty()) {
 					GameControl* current_control = accepting_keys[key][accepting_keys[key].size()-1];
 					if(abs(time - current_control->time) < GRADE_BAD) {
-						unsigned hit_level = game_check_key(current_control, round, time, key); 
+						unsigned hit_level = game_check_key(current_control, round, time, key);
+						accepting_keys[key].pop_back();
+						images[current_control] = NULL;  //destroy invalid images
+						hide_game_stick(current_control, &old_images[current_control]);
+						old_images[current_control] = NULL;
 						//TODO: Play efforts for bad/good/perfect
 						draw_hit_result(current_control, hit_level);
 					}
