@@ -255,6 +255,18 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 						test_and_draw_combo(hit_level, &combo, &max_combo);
 					}
 				}
+			} else if(key == 27) {
+				//Pause game
+				IMAGE cache;
+				IMAGE pause;
+				getimage(&cache, 193, 129, 616, 310);
+				loadimage(&pause, "resource/image/paused.jpg", 616, 310, true);
+				putimage(193, 129, &pause);
+				const char pause_key = _getch();
+				if(pause_key == 'E' || pause_key == 'e') {
+					return nullptr;
+				}
+				putimage(193, 129, &cache);
 			}
 		}
 		sprintf_s(timer_buffer, 100, "Score: %5ld", score);

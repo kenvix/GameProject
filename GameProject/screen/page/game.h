@@ -10,6 +10,9 @@ inline int show_game(GameMap* map) {
 	std::vector<GameControl*> controls = game_read_control(map);
 	GameRound* round = game_event_loop(map, &controls);
 	//TODO: 游戏结束评分界面
+	if(round == nullptr) {
+		return 0;
+	}
 	return show_result(round);
 }
 
