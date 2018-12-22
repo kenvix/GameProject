@@ -13,6 +13,9 @@
 #include <vector>
 #define F_OK 0
 
+//玩家升级到LV1所需经验
+#define PLAYER_LV0_EXPERIENCE 100000
+
 /**
  * 连接字符串
  */
@@ -169,6 +172,19 @@ inline GameMap* get_map_info(const char* path) {
 	return data;
 }
 
+/**
+ * 获取某个等级所需经验值
+ * @param level 等级
+ * @return 所需经验
+ */
+inline unsigned long long get_level_experience(unsigned level) {
+	unsigned long long exp = PLAYER_LV0_EXPERIENCE;
+	for (unsigned i = 0; i < level; i++) {
+		exp *= 2;
+	}
+	return exp;
+}
+
 inline char* get_difficulty(unsigned short difficulty) {
 	char* result = (char*) calloc(8, sizeof(char));
 	switch (difficulty) { //等级评定 Easy=0 Normal=1 Hard=2 Chaos=3
@@ -227,6 +243,26 @@ inline char get_game_key(char key) {
 			break;
 	}
 	return '\0';
+}
+
+inline void get_level_description(unsigned level, char** target) {
+	switch (level) {
+		case 3:
+			*target = (char*) "Perfect";
+			break;
+		
+		case 2:
+			*target = (char*) "Good";
+			break;
+
+		case 1:
+			*target = (char*) "Bad";
+			break;
+
+		default:
+			*target = (char*) "Miss";
+			break;
+	}
 }
 
 #endif
