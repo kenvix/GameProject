@@ -13,8 +13,8 @@
 #define GRADE_GOOD 0.3
 #define GRADE_BAD 0.5
 
-#define SCORE_PERFECT 100
-#define SCORE_GOOD 50
+#define SCORE_PERFECT 50
+#define SCORE_GOOD 15
 #define SCORE_BAD -10
 #define SCORE_MISS -30
 
@@ -72,14 +72,15 @@ inline std::vector<GameControl*> game_read_control(GameMap* map) {
  * @param time 击打时的相对播放时间
  * @return 击打等级，1=BAD 2=GOOD 3=PERFECT 0=INVALID
  */
-inline unsigned int game_check_key(GameControl* control, GameRound* round, double time, char key, long* score) {
+inline unsigned int game_check_key(GameControl* control, GameRound* round, double time, char key, long* score, unsigned combo) {
 	double pressed_time = control->time - time;
+	combo++;
 	if(pressed_time > -GRADE_PERFECT && pressed_time < GRADE_PERFECT) {
-		*score += SCORE_PERFECT;
+		*score += SCORE_PERFECT * combo;
 		
 		return 3;
 	} else if(pressed_time > -GRADE_GOOD && pressed_time < GRADE_GOOD) {
-		*score += SCORE_GOOD;
+		*score += SCORE_GOOD * combo;
 
 		return 2;
 	} else if(pressed_time > -GRADE_BAD && pressed_time < GRADE_BAD) {
@@ -245,14 +246,14 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				if(!accepting_keys[key].empty()) {
 					GameControl* current_control = accepting_keys[key][accepting_keys[key].size()-1];
 					if(abs(time - current_control->time) < GRADE_BAD) {
-						unsigned hit_level = game_check_key(current_control, round, time, key, &score);
+						unsigned hit_level = game_check_key(current_control, round, time, key, &score, combo);
+						test_and_draw_combo(hit_level, &combo, &max_combo);
 						accepting_keys[key].pop_back();
 						images[current_control] = NULL;  //destroy invalid images
 						hide_game_stick(current_control, &old_images[current_control]);
 						old_images[current_control] = NULL;
 						//TODO: Play efforts for bad/good/perfect
 						draw_hit_result(current_control, hit_level);
-						test_and_draw_combo(hit_level, &combo, &max_combo);
 					}
 				}
 			} else if(key == 27) {
