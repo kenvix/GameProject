@@ -42,11 +42,17 @@ int main(int argc, char* argv[]) {
 	std::vector<std::string> maps = get_map_list();
 	switch (selection) {
 		case 1:
+			MAP_NODE:
 			selected_map = show_map(maps);
 			if(selected_map == 0) {
 				goto INDEX_NODE;
 			} else {
-				show_game(get_map_info(maps[selected_map-1].c_str()));
+				if(show_game(get_map_info(maps[selected_map-1].c_str())) == 1) {
+					show_record();
+					goto INDEX_NODE;
+				} else {
+					goto MAP_NODE;
+				}
 			}
 			break;
 

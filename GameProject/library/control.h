@@ -15,7 +15,7 @@
 
 #define SCORE_PERFECT 100
 #define SCORE_GOOD 50
-#define SCORE_BAD -5
+#define SCORE_BAD -10
 #define SCORE_MISS -30
 
 //条子起始位置
@@ -72,18 +72,18 @@ inline std::vector<GameControl*> game_read_control(GameMap* map) {
  * @param time 击打时的相对播放时间
  * @return 击打等级，1=BAD 2=GOOD 3=PERFECT 0=INVALID
  */
-inline unsigned int game_check_key(GameControl* control, GameRound* round, double time, char key) {
+inline unsigned int game_check_key(GameControl* control, GameRound* round, double time, char key, long* score) {
 	double pressed_time = control->time - time;
 	if(pressed_time > -GRADE_PERFECT && pressed_time < GRADE_PERFECT) {
-		round->score += SCORE_PERFECT;
+		*score += SCORE_PERFECT;
 		
 		return 3;
 	} else if(pressed_time > -GRADE_GOOD && pressed_time < GRADE_GOOD) {
-		round->score += SCORE_GOOD;
+		*score += SCORE_GOOD;
 
 		return 2;
 	} else if(pressed_time > -GRADE_BAD && pressed_time < GRADE_BAD) {
-		round->score += SCORE_BAD;
+		*score += SCORE_BAD;
 
 		return 1;
 	}
@@ -191,6 +191,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 	std::unordered_map<GameControl*, IMAGE> old_images;
 	unsigned max_combo = 0;
 	unsigned combo = 0;
+	long score = 0;
 	for (const char game_key : game_keys)
 		accepting_keys[game_key] = std::vector<GameControl*>();
 
@@ -198,6 +199,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 	//ready to start timer
 	RECT common_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 40, WINDOW_WIDTH, WINDOW_HEIGHT};
 	RECT timer_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 20, WINDOW_WIDTH, WINDOW_HEIGHT};
+	RECT score_rect = {WINDOW_WIDTH - 230, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 	char* timer_buffer = (char*) calloc(100, sizeof(char));
 	settextstyle(18, 0, _T("Consolas"));
 	drawtext(_T(map->name), &common_rect, DT_SINGLELINE);
@@ -223,7 +225,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				if(time - object->time > GRADE_BAD) {
 					querying_accepting_keys->pop_back();
 					//TODO: STATUS MISS
-					round->score += SCORE_MISS;
+					score += SCORE_MISS;
 					images[object] = NULL;  //destroy invalid images
 					hide_game_stick(object, &old_images[object]);
 					old_images[object] = NULL;
@@ -243,7 +245,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				if(!accepting_keys[key].empty()) {
 					GameControl* current_control = accepting_keys[key][accepting_keys[key].size()-1];
 					if(abs(time - current_control->time) < GRADE_BAD) {
-						unsigned hit_level = game_check_key(current_control, round, time, key);
+						unsigned hit_level = game_check_key(current_control, round, time, key, &score);
 						accepting_keys[key].pop_back();
 						images[current_control] = NULL;  //destroy invalid images
 						hide_game_stick(current_control, &old_images[current_control]);
@@ -255,9 +257,12 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				}
 			}
 		}
-		Sleep(15);
+		sprintf_s(timer_buffer, 100, "Score: %5ld", score);
+		drawtext(_T(timer_buffer), &score_rect, DT_SINGLELINE);
+		Sleep(STICK_STEP_TIME * 1000);
  	}
 	round->max_combo = max_combo;
+	round->score = score < 0 ? 0 : score;
 	return round;
 }
 #endif

@@ -16,7 +16,7 @@ extern FILE* file_rounds_index;
 inline void apply_game_result(GameRound* round) {
 	if(player->max_combo < round->max_combo)
 		player->max_combo = round->max_combo;
-	if(round->score >= 0) {
+	if(round->score > 0) {
 		player->experience += round->score;
 		if(player->max_score < round->score)
 			player->max_score = round->score;
@@ -83,8 +83,6 @@ inline int show_result(GameRound* round) {
 		}
 	}
 	FlushMouseMsgBuffer();
-	_getch();
-	closegraph();
 	return no;
 }
 #endif
