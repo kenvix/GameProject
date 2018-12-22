@@ -13,6 +13,9 @@
 #include <vector>
 #define F_OK 0
 
+//玩家升级到LV1所需经验
+#define PLAYER_LV0_EXPERIENCE 100000
+
 /**
  * 连接字符串
  */
@@ -167,6 +170,19 @@ inline GameMap* get_map_info(const char* path) {
 	data->time = (double) minute * 60 + second;
 	fgets(data->description, 99, file);
 	return data;
+}
+
+/**
+ * 获取某个等级所需经验值
+ * @param level 等级
+ * @return 所需经验
+ */
+inline unsigned long long get_level_experience(unsigned level) {
+	unsigned long long exp = PLAYER_LV0_EXPERIENCE;
+	for (unsigned i = 0; i < level; i++) {
+		exp *= 2;
+	}
+	return exp;
 }
 
 inline char* get_difficulty(unsigned short difficulty) {

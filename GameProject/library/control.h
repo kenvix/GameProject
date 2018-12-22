@@ -15,8 +15,8 @@
 
 #define SCORE_PERFECT 100
 #define SCORE_GOOD 50
-#define SCORE_BAD 0
-#define SCORE_MISS -101
+#define SCORE_BAD -5
+#define SCORE_MISS -30
 
 //条子起始位置
 #define STICK_INIT_POSITION 20
@@ -164,6 +164,21 @@ inline void draw_hit_result(GameControl* control, unsigned hit_level) {
 	drawtext(_T(result), &common_rect, DT_SINGLELINE);
 }
 
+inline void test_and_draw_combo(unsigned hit_level, unsigned* combo, unsigned* max_combo) {
+	if(hit_level == 3 || hit_level == 2) {
+		(*combo)++;
+		if(*max_combo < *combo)
+			*max_combo = *combo;
+	} else {
+		*combo = 0;
+	}
+	char* result = (char*) calloc(30, sizeof(char));
+	RECT combo_rect = {WINDOW_WIDTH - 230, 20, WINDOW_WIDTH, WINDOW_HEIGHT};
+	settextstyle(18, 0, _T("Consolas"));
+	sprintf_s(result, 30, "Combo %3u / Max Combo %3u", *combo, *max_combo);
+	drawtext(_T(result), &combo_rect, DT_SINGLELINE);
+}
+
 /**
  * 游戏事件循环
  * @param map 地图对象
@@ -174,6 +189,8 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 	std::map<char, std::vector<GameControl*>> accepting_keys;
 	std::unordered_map<GameControl*, IMAGE> images;
 	std::unordered_map<GameControl*, IMAGE> old_images;
+	unsigned max_combo = 0;
+	unsigned combo = 0;
 	for (const char game_key : game_keys)
 		accepting_keys[game_key] = std::vector<GameControl*>();
 
@@ -211,6 +228,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 					hide_game_stick(object, &old_images[object]);
 					old_images[object] = NULL;
 					draw_hit_result(object, 0);
+					test_and_draw_combo(0, &combo, &max_combo);
 				} else {
 					draw_game_stick(object, &images[object], &old_images[object]);
 				}
@@ -232,12 +250,14 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 						old_images[current_control] = NULL;
 						//TODO: Play efforts for bad/good/perfect
 						draw_hit_result(current_control, hit_level);
+						test_and_draw_combo(hit_level, &combo, &max_combo);
 					}
 				}
 			}
 		}
 		Sleep(15);
  	}
+	round->max_combo = max_combo;
 	return round;
 }
 #endif
