@@ -4,7 +4,11 @@
 #include "../../library/global.h"
 #include "../../library/view.h"
 
-inline void show_record(GamePlayer* player) {
+extern GamePlayer* player;
+extern GameRound* rounds_basic;
+extern unsigned rounds_num;
+
+inline void show_record() {
 	cleanup();
 	put_background("record.jpg");
 	draw_player_info();
