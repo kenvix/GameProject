@@ -140,11 +140,18 @@ exit 0</Command>
       <FileType>CCode</FileType>
     </ClInclude>
     <ClInclude Include="library\view.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="screen\page\game.h" />
     <ClInclude Include="screen\page\record.h" />
     <ClInclude Include="screen\page\index.h" />
     <ClInclude Include="screen\page\map.h" />
     <ClInclude Include="screen\page\result.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GameProject.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

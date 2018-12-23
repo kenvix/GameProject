@@ -15,5 +15,12 @@
     <ClInclude Include="screen\page\record.h" />
     <ClInclude Include="screen\page\game.h" />
     <ClInclude Include="screen\page\result.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="GameProject.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
   </ItemGroup>
 </Project>
