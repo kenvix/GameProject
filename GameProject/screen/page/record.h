@@ -7,7 +7,6 @@
 extern GamePlayer* player;
 extern GameRound* rounds_basic;
 extern unsigned rounds_num;
-
 inline void show_record() {
 	cleanup();
 	put_background("record.jpg");
