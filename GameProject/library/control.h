@@ -149,7 +149,8 @@ inline void hide_game_stick(GameControl* control, IMAGE* cache) {
  */
 inline void game_play_music(GameMap* map) {
 	music_stop();
-	music_play(map->path, "map", true);
+	music_init(cat(map->path, "/music.mp3"), "map");
+	music_play();
 }
 
 /**
@@ -173,7 +174,7 @@ inline void test_and_draw_combo(unsigned hit_level, unsigned* combo, unsigned* m
 	} else {
 		*combo = 0;
 	}
-	char* result = (char*) calloc(30, sizeof(char));
+	char result[30];
 	RECT combo_rect = {WINDOW_WIDTH - 230, 20, WINDOW_WIDTH, WINDOW_HEIGHT};
 	settextstyle(18, 0, _T("Consolas"));
 	sprintf_s(result, 30, "Combo %3u / Max Combo %3u", *combo, *max_combo);
@@ -195,7 +196,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 	long score = 0;
 	for (const char game_key : game_keys)
 		accepting_keys[game_key] = std::vector<GameControl*>();
-
+	char* music_position_string = (char*) calloc(128, sizeof(char));
 	game_play_music(map);
 	//ready to start timer
 	RECT common_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 40, WINDOW_WIDTH, WINDOW_HEIGHT};
@@ -206,6 +207,11 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 	drawtext(_T(map->name), &common_rect, DT_SINGLELINE);
 	for (double time = 0; time < map->time; time += STICK_STEP_TIME) {
 		unsigned control_size = control->size();
+		//校准时间到播放进度
+		music_get_position(&music_position_string);
+		double music_position = (double) atoi(music_position_string) / 1000;
+		if(music_position > 0.2)
+			time = music_position;
 		if(control_size > 0) {
 			GameControl* head_control = (*control)[control_size-1];
 			if(time >= (head_control->time - STICK_ADVANCE_TIME)) {
@@ -277,6 +283,8 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
  	}
 	round->max_combo = max_combo;
 	round->score = score < 0 ? 0 : score;
+	free(music_position_string);
+	free(timer_buffer);
 	return round;
 }
 #endif

@@ -13,6 +13,8 @@ inline int show_game(GameMap* map) {
 	if(round == nullptr) {
 		return 0;
 	}
+	for (GameControl* control : controls)
+		free(control);
 	return show_result(round);
 }
 
