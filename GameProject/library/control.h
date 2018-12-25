@@ -41,14 +41,18 @@ inline bool is_valid_key(int key) {
 	return false;
 }
 
-inline std::vector<GameControl*> game_read_control(GameMap* map) {
+inline std::vector<GameControl*> game_read_control(GameMap* map, unsigned* num = nullptr) {
 	FILE* fs;
 	errno = fopen_s(&fs, cat(cat("resource/map/", map->path),"/control.txt"), "r");
+	if(errno != 0)
+		bullshit({"Failed to read control: file error ", std::to_string(errno).c_str()});
 	fseek(fs, 0L, SEEK_END);
 	unsigned size = ftell(fs);
 	fseek(fs, 0L, SEEK_SET);
 	std::vector<GameControl*> result;
-	for (unsigned i = 0; feof(fs) != 1; i++) {
+	result.reserve(4096);
+	unsigned i = 0;
+	for (; feof(fs) != 1; i++) {
 		int minute = -1;
 		double second;
 		char key;
@@ -62,6 +66,8 @@ inline std::vector<GameControl*> game_read_control(GameMap* map) {
 			result.insert(result.begin(), control);
 		}
 	}
+	if(num != nullptr)
+		*num = i;
 	return result;
 }
 
@@ -189,16 +195,28 @@ inline void test_and_draw_combo(unsigned hit_level, GameScoreStat* stat, unsigne
 inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* control) {
 	GameRound* round = (GameRound*) calloc(1, sizeof(GameRound));
 	GameScoreStat* stat = (GameScoreStat*) calloc(1, sizeof(GameScoreStat));
-	std::map<char, std::vector<GameControl*>> accepting_keys;
-	std::unordered_map<GameControl*, IMAGE> images;
-	std::map<char, GameControl*> last_control;
-	std::unordered_map<GameControl*, IMAGE> old_images;
+	std::map<char, std::vector<GameControl*>>* accepting_keys = new std::map<char, std::vector<GameControl*>>();
+	std::unordered_map<GameControl*, IMAGE*>* images = new std::unordered_map<GameControl*, IMAGE*>();
+	std::map<char, GameControl*>* last_control = new std::map<char, GameControl*>();
+	std::unordered_map<GameControl*, IMAGE*>* old_images = new std::unordered_map<GameControl*, IMAGE*>;
+	images->reserve(4096);
+	old_images->reserve(4096);
+	//images.reserve(control->size() + 1);
+	//old_images.reserve(control->size() + 1);
 	unsigned max_combo = 0;
 	unsigned combo = 0;
 	for (const char game_key : game_keys) {
-		accepting_keys[game_key] = std::vector<GameControl*>();
-		last_control[game_key] = nullptr;
+		(*accepting_keys)[game_key] = std::vector<GameControl*>();
+		(*last_control)[game_key] = nullptr;
 	}
+	////////////////////////////
+	/*for(auto c : *control) {
+					IMAGE image;
+					IMAGE cache;
+					images[c] = image;
+					old_images[c] = cache;
+	}*/
+	/////////////////////////////
 	char* music_position_string = (char*) calloc(128, sizeof(char));
 	game_play_music(map);
 	//ready to start timer
@@ -212,27 +230,27 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 	for (double time = 0; time < map->time; time += STICK_STEP_TIME) {
 		unsigned control_size = control->size();
 		//校准时间到播放进度
-		music_get_position(&music_position_string);
-		double music_position = (double) atoi(music_position_string) / 1000;
+		//music_get_position(&music_position_string);
+		//double music_position = (double) atoi(music_position_string) / 1000;
 		if(control_size > 0) {
 			GameControl* head_control = (*control)[control_size-1];
 			if(time >= (head_control->time - STICK_ADVANCE_TIME)) {
 				control->pop_back();
-				std::vector<GameControl*>* target = &accepting_keys[head_control->key];
-				if(last_control[head_control->key] == nullptr || time - ( last_control[head_control->key]->time - STICK_ADVANCE_TIME ) > 0.34) {
-					IMAGE image;
-					IMAGE cache;
-					draw_game_stick(head_control, &image, &cache);
-					images[head_control] = image;
-					old_images[head_control] = cache;
+				std::vector<GameControl*>* target = &(*accepting_keys)[head_control->key];
+				if((*last_control)[head_control->key] == nullptr || time - ( (*last_control)[head_control->key]->time - STICK_ADVANCE_TIME ) > 0.34) {
+					IMAGE* image = new IMAGE();
+					IMAGE* cache = new IMAGE();
+					draw_game_stick(head_control, image, cache);
+					(*images)[head_control] = image;
+					(*old_images)[head_control] = cache;
 					target->insert(target->begin(), head_control);
 					stat->total++;
 				}
-				last_control[head_control->key] = head_control;
+				(*last_control)[head_control->key] = head_control;
 			}
 		}
 		for (const char game_key : game_keys) {
-			std::vector<GameControl*>* querying_accepting_keys = &accepting_keys[game_key];
+			std::vector<GameControl*>* querying_accepting_keys = &(*accepting_keys)[game_key];
 			if(!querying_accepting_keys->empty()) {
 				for(GameControl* object : *querying_accepting_keys) {
 					if(time - object->time > GRADE_BAD) {
@@ -240,11 +258,15 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 						//TODO: STATUS MISS
 						stat->score += SCORE_MISS;
 						stat->miss++;
-						hide_game_stick(object, &old_images[object]);
+						hide_game_stick(object, (*old_images)[object]);
 						draw_hit_result(object, 0);
 						test_and_draw_combo(0, stat, &max_combo);
+						delete (*images)[object];
+						delete (*old_images)[object];
+						images->erase(object);
+						old_images->erase(object);
 					} else {
-						draw_game_stick(object, &images[object], &old_images[object]);
+						draw_game_stick(object, (*images)[object], (*old_images)[object]);
 					}
 				}
 			}
@@ -255,15 +277,19 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 			int key = _getch();
 			if(is_valid_key(key)) {
 				key = get_game_key(key);
-				if(!accepting_keys[key].empty()) {
-					GameControl* current_control = accepting_keys[key][accepting_keys[key].size()-1];
+				if(!(*accepting_keys)[key].empty()) {
+					GameControl* current_control = (*accepting_keys)[key][(*accepting_keys)[key].size()-1];
 					if(time - current_control->time < GRADE_BAD) {
 						unsigned hit_level = game_check_key(current_control, round, stat, time, key);
 						test_and_draw_combo(hit_level, stat, &max_combo);
-						accepting_keys[key].pop_back();
-						hide_game_stick(current_control, &old_images[current_control]);
+						(*accepting_keys)[key].pop_back();
+						hide_game_stick(current_control, (*old_images)[current_control]);
 						//TODO: Play efforts for bad/good/perfect
 						draw_hit_result(current_control, hit_level);
+						delete (*images)[current_control];
+						delete (*old_images)[current_control];
+						images->erase(current_control);
+						old_images->erase(current_control);
 					}
 				}
 			} else if(key == 27) {

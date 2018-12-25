@@ -7,6 +7,8 @@
 extern GamePlayer* player;
 extern GameRound* rounds_basic;
 extern unsigned rounds_num;
+extern FILE* file_player;
+
 inline void show_record() {
 	cleanup();
 	put_background("record.jpg");
@@ -60,4 +62,16 @@ inline void show_record() {
 	}
 	FlushMouseMsgBuffer();
 }
+
+inline void show_rename() {
+	char* name = (char*) calloc(512, sizeof(char));
+	name[0] = '\0';
+	InputBox(name, 511, "What's your name?", "Rename", player->name, 0, 0, false);
+	if(strlen(name) > 1) {
+		player->name_length = strlen(name);
+		player->name = name;
+		db_write_player(file_player, player);
+	}
+}
+
 #endif
