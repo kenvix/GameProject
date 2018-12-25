@@ -11,10 +11,24 @@
 #include <xutility>
 #include "global.h"
 #include <vector>
+#include<initializer_list> 
+#include <iostream>
+#include <string>
 #define F_OK 0
 
 //玩家升级到LV1所需经验
 #define PLAYER_LV0_EXPERIENCE 100000
+
+/**
+ * 错误处理函数: 打印错误
+ * @param errors 错误列表，需用大括号括起来
+ */
+template <typename T>
+inline void bullshit(std::initializer_list<T> errors) {
+	std::cerr << "----------------------Error Occured------------------------" << std::endl;
+	for(T err : errors)
+		std::cerr << err << std::endl;
+}
 
 /**
  * 连接字符串
@@ -76,8 +90,10 @@ inline bool db_init(const char* path, FILE** target) {
 		is_exist = true;
 		err = fopen_s(&stream, path, "rb+");
 	}
-	if(err)
+	if(err) {
 		errno = err;
+		bullshit({"Failed to open database file: ", path, std::to_string(errno).c_str()});
+	}
 	*target = stream;
 	return is_exist;
 }
@@ -157,7 +173,10 @@ inline std::vector<std::string> get_map_list() {
  */
 inline GameMap* get_map_info(const char* path) {
 	FILE* file = nullptr;
-	errno = fopen_s(&file, cat(cat("resource/map/", path), "/info.txt"), "r");
+	const char* file_path = cat(cat("resource/map/", path), "/info.txt");
+	errno = fopen_s(&file, file_path, "r");
+	if(errno)
+		bullshit({"Failed to open map info file: ", file_path, std::to_string(errno).c_str()});
 	GameMap* data = (GameMap*) calloc(1, sizeof(GameMap));
 	data->name = (char*) calloc(50, sizeof(char));
 	data->description = (char*) calloc(100, sizeof(char));

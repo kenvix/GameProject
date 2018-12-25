@@ -30,7 +30,8 @@ int main(int argc, char* argv[]) {
 	db_init("data/rounds_index.dat", &file_rounds_index);
 	rounds_basic = db_read_round(file_rounds_basic, file_rounds_index, &rounds_num);
 	player = db_read_player(file_player);
-	music_play("background.mp3");
+	music_init("background.mp3");
+	music_play();
 	if(strlen(player->name) < 1) {
 		player->name = DEFAULT_NAME;
 		player->name_length = strlen(DEFAULT_NAME);
