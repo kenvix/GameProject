@@ -48,6 +48,16 @@ typedef struct {
 	IMAGE* image;
 } GameControl;
 
+typedef struct {
+	long score;
+	unsigned combo;
+	unsigned total; //方块总数
+	unsigned perfect;
+	unsigned good;
+	unsigned bad;
+	unsigned miss;
+} GameScoreStat;
+
 extern GamePlayer* player;
 extern GameRound* rounds_basic;
 extern unsigned rounds_num;

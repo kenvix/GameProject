@@ -72,20 +72,20 @@ inline std::vector<GameControl*> game_read_control(GameMap* map) {
  * @param time 击打时的相对播放时间
  * @return 击打等级，1=BAD 2=GOOD 3=PERFECT 0=INVALID
  */
-inline unsigned int game_check_key(GameControl* control, GameRound* round, double time, char key, long* score, unsigned combo) {
+inline unsigned int game_check_key(GameControl* control, GameRound* round, GameScoreStat* stat, double time, char key) {
 	double pressed_time = control->time - time;
-	combo++;
+	stat->combo++;
 	if(pressed_time > -GRADE_PERFECT && pressed_time < GRADE_PERFECT) {
-		*score += SCORE_PERFECT * combo;
-		
+		stat->score += SCORE_PERFECT * stat->combo;
+		stat->perfect++;
 		return 3;
 	} else if(pressed_time > -GRADE_GOOD && pressed_time < GRADE_GOOD) {
-		*score += SCORE_GOOD * combo;
-
+		stat->score += SCORE_GOOD * stat->combo;
+		stat->good++;
 		return 2;
 	} else if(pressed_time > -GRADE_BAD && pressed_time < GRADE_BAD) {
-		*score += SCORE_BAD;
-
+		stat->score += SCORE_BAD;
+		stat->bad++;
 		return 1;
 	}
 	return 0;
@@ -166,18 +166,18 @@ inline void draw_hit_result(GameControl* control, unsigned hit_level) {
 	drawtext(_T(result), &common_rect, DT_SINGLELINE);
 }
 
-inline void test_and_draw_combo(unsigned hit_level, unsigned* combo, unsigned* max_combo) {
+inline void test_and_draw_combo(unsigned hit_level, GameScoreStat* stat, unsigned* max_combo) {
 	if(hit_level == 3 || hit_level == 2) {
-		(*combo)++;
-		if(*max_combo < *combo)
-			*max_combo = *combo;
+		stat->combo++;
+		if(*max_combo < stat->combo)
+			*max_combo = stat->combo;
 	} else {
-		*combo = 0;
+		stat->combo = 0;
 	}
 	char result[30];
 	RECT combo_rect = {WINDOW_WIDTH - 230, 20, WINDOW_WIDTH, WINDOW_HEIGHT};
 	settextstyle(18, 0, _T("Consolas"));
-	sprintf_s(result, 30, "Combo %3u / Max Combo %3u", *combo, *max_combo);
+	sprintf_s(result, 30, "Combo %3u / Max Combo %3u", stat->combo, *max_combo);
 	drawtext(_T(result), &combo_rect, DT_SINGLELINE);
 }
 
@@ -188,21 +188,25 @@ inline void test_and_draw_combo(unsigned hit_level, unsigned* combo, unsigned* m
  */
 inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* control) {
 	GameRound* round = (GameRound*) calloc(1, sizeof(GameRound));
+	GameScoreStat* stat = (GameScoreStat*) calloc(1, sizeof(GameScoreStat));
 	std::map<char, std::vector<GameControl*>> accepting_keys;
 	std::unordered_map<GameControl*, IMAGE> images;
+	std::map<char, GameControl*> last_control;
 	std::unordered_map<GameControl*, IMAGE> old_images;
 	unsigned max_combo = 0;
 	unsigned combo = 0;
-	long score = 0;
-	for (const char game_key : game_keys)
+	for (const char game_key : game_keys) {
 		accepting_keys[game_key] = std::vector<GameControl*>();
+		last_control[game_key] = nullptr;
+	}
 	char* music_position_string = (char*) calloc(128, sizeof(char));
 	game_play_music(map);
 	//ready to start timer
 	RECT common_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 40, WINDOW_WIDTH, WINDOW_HEIGHT};
 	RECT timer_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 20, WINDOW_WIDTH, WINDOW_HEIGHT};
 	RECT score_rect = {WINDOW_WIDTH - 230, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-	char* timer_buffer = (char*) calloc(100, sizeof(char));
+	RECT stat_rect = {7, WINDOW_HEIGHT - 20, WINDOW_WIDTH, WINDOW_HEIGHT};
+	char* timer_buffer = (char*) calloc(256, sizeof(char));
 	settextstyle(18, 0, _T("Consolas"));
 	drawtext(_T(map->name), &common_rect, DT_SINGLELINE);
 	for (double time = 0; time < map->time; time += STICK_STEP_TIME) {
@@ -210,19 +214,21 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 		//校准时间到播放进度
 		music_get_position(&music_position_string);
 		double music_position = (double) atoi(music_position_string) / 1000;
-		if(music_position > 0.2)
-			time = music_position;
 		if(control_size > 0) {
 			GameControl* head_control = (*control)[control_size-1];
 			if(time >= (head_control->time - STICK_ADVANCE_TIME)) {
 				control->pop_back();
-				IMAGE image;
-				IMAGE cache;
-				draw_game_stick(head_control, &image, &cache);
-				images[head_control] = image;
-				old_images[head_control] = cache;
 				std::vector<GameControl*>* target = &accepting_keys[head_control->key];
-				target->insert(target->begin(), head_control);
+				if(last_control[head_control->key] == nullptr || time - ( last_control[head_control->key]->time - STICK_ADVANCE_TIME ) > 0.34) {
+					IMAGE image;
+					IMAGE cache;
+					draw_game_stick(head_control, &image, &cache);
+					images[head_control] = image;
+					old_images[head_control] = cache;
+					target->insert(target->begin(), head_control);
+					stat->total++;
+				}
+				last_control[head_control->key] = head_control;
 			}
 		}
 		for (const char game_key : game_keys) {
@@ -232,12 +238,11 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 					if(time - object->time > GRADE_BAD) {
 						querying_accepting_keys->pop_back();
 						//TODO: STATUS MISS
-						score += SCORE_MISS;
-						images[object] = NULL;  //destroy invalid images
+						stat->score += SCORE_MISS;
+						stat->miss++;
 						hide_game_stick(object, &old_images[object]);
-						old_images[object] = NULL;
 						draw_hit_result(object, 0);
-						test_and_draw_combo(0, &combo, &max_combo);
+						test_and_draw_combo(0, stat, &max_combo);
 					} else {
 						draw_game_stick(object, &images[object], &old_images[object]);
 					}
@@ -253,18 +258,17 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				if(!accepting_keys[key].empty()) {
 					GameControl* current_control = accepting_keys[key][accepting_keys[key].size()-1];
 					if(time - current_control->time < GRADE_BAD) {
-						unsigned hit_level = game_check_key(current_control, round, time, key, &score, combo);
-						test_and_draw_combo(hit_level, &combo, &max_combo);
+						unsigned hit_level = game_check_key(current_control, round, stat, time, key);
+						test_and_draw_combo(hit_level, stat, &max_combo);
 						accepting_keys[key].pop_back();
-						images[current_control] = NULL;  //destroy invalid images
 						hide_game_stick(current_control, &old_images[current_control]);
-						old_images[current_control] = NULL;
 						//TODO: Play efforts for bad/good/perfect
 						draw_hit_result(current_control, hit_level);
 					}
 				}
 			} else if(key == 27) {
 				//Pause game
+				music_pause();
 				IMAGE cache;
 				IMAGE pause;
 				getimage(&cache, 193, 129, 616, 310);
@@ -275,14 +279,17 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 					return nullptr;
 				}
 				putimage(193, 129, &cache);
+				music_play();
 			}
 		}
-		sprintf_s(timer_buffer, 100, "Score: %5ld", score);
+		sprintf_s(timer_buffer, 100, "Score: %6ld", stat->score);
 		drawtext(_T(timer_buffer), &score_rect, DT_SINGLELINE);
+		sprintf_s(timer_buffer, 100, "Total %4u / Perfect %3u / Good %3u / Bad %3u / Miss %3u", stat->total, stat->perfect, stat->good, stat->bad, stat->miss);
+		drawtext(_T(timer_buffer), &stat_rect, DT_SINGLELINE);
 		Sleep(STICK_STEP_TIME * 1000);
  	}
 	round->max_combo = max_combo;
-	round->score = score < 0 ? 0 : score;
+	round->score = stat->score < 0 ? 0 : stat->score;
 	free(music_position_string);
 	free(timer_buffer);
 	return round;
