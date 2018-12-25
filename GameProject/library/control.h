@@ -208,7 +208,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 		unsigned control_size = control->size();
 		if(control_size > 0) {
 			GameControl* head_control = (*control)[control_size-1];
-			if(STICK_ADVANCE_TIME >= (head_control->time - time)) {
+			if(time >= (head_control->time - STICK_ADVANCE_TIME)) {
 				control->pop_back();
 				IMAGE image;
 				IMAGE cache;
@@ -222,18 +222,19 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 		for (const char game_key : game_keys) {
 			std::vector<GameControl*>* querying_accepting_keys = &accepting_keys[game_key];
 			if(!querying_accepting_keys->empty()) {
-				GameControl* object = (*querying_accepting_keys)[querying_accepting_keys->size()-1];
-				if(time - object->time > GRADE_BAD) {
-					querying_accepting_keys->pop_back();
-					//TODO: STATUS MISS
-					score += SCORE_MISS;
-					images[object] = NULL;  //destroy invalid images
-					hide_game_stick(object, &old_images[object]);
-					old_images[object] = NULL;
-					draw_hit_result(object, 0);
-					test_and_draw_combo(0, &combo, &max_combo);
-				} else {
-					draw_game_stick(object, &images[object], &old_images[object]);
+				for(GameControl* object : *querying_accepting_keys) {
+					if(time - object->time > GRADE_BAD) {
+						querying_accepting_keys->pop_back();
+						//TODO: STATUS MISS
+						score += SCORE_MISS;
+						images[object] = NULL;  //destroy invalid images
+						hide_game_stick(object, &old_images[object]);
+						old_images[object] = NULL;
+						draw_hit_result(object, 0);
+						test_and_draw_combo(0, &combo, &max_combo);
+					} else {
+						draw_game_stick(object, &images[object], &old_images[object]);
+					}
 				}
 			}
 		}
@@ -245,7 +246,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				key = get_game_key(key);
 				if(!accepting_keys[key].empty()) {
 					GameControl* current_control = accepting_keys[key][accepting_keys[key].size()-1];
-					if(abs(time - current_control->time) < GRADE_BAD) {
+					if(time - current_control->time < GRADE_BAD) {
 						unsigned hit_level = game_check_key(current_control, round, time, key, &score, combo);
 						test_and_draw_combo(hit_level, &combo, &max_combo);
 						accepting_keys[key].pop_back();
