@@ -43,22 +43,22 @@ inline int show_difficulty() {
 	int difficulty = -2;
 	while (true) {
 		const MOUSEMSG Mouse = GetMouseMsg();
-		if ((Mouse.x >= 9+193 && Mouse.x <= 195+193) && (Mouse.y >= 100+129 && Mouse.y < 251+129)) {
+		if ((Mouse.x >= 20+193 && Mouse.x <= 202+193) && (Mouse.y >= 86+129 && Mouse.y < 294+129)) {
 			if (Mouse.mkLButton) {
 				difficulty = 0;
 			}
 		} else {
-			if ((Mouse.x > 195+193 && Mouse.x <= 383+193) && (Mouse.y >= 100+129 && Mouse.y < 251+129)) {
+			if ((Mouse.x > 231+193 && Mouse.x <= 404+193) && (Mouse.y >= 86+129 && Mouse.y <294+129)) {
 				if (Mouse.mkLButton) {
 					difficulty = 1;
 				}
 			} else {
-				if ((Mouse.x > 383+193 && Mouse.x <= 616+193) && (Mouse.y >= 100+129 && Mouse.y < 251+129)) {
+				if ((Mouse.x > 436+193 && Mouse.x <= 598+193) && (Mouse.y >= 86+129 && Mouse.y < 294+129)) {
 					if (Mouse.mkLButton) {
 						difficulty = 2;
 					}
 				} else {
-					if ((Mouse.x > 383+193 && Mouse.x <= 616+193) && (Mouse.y >= 252+129 && Mouse.y < 303+129)) {
+					if ((Mouse.x >= 181 && Mouse.x <= 294) && (Mouse.y >= 116 && Mouse.y < 161)) {
 						if (Mouse.mkLButton) {
 							difficulty = -1;
 						}
@@ -66,7 +66,7 @@ inline int show_difficulty() {
 				}
 			}
 		}
-		if(difficulty > -1)
+		if(difficulty >= -1)
 			break;
 	}
 	putimage(193, 129, &cache);
