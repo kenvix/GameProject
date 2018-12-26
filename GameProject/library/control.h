@@ -193,7 +193,6 @@ inline void draw_hit_result(GameControl* control, unsigned hit_level) {
 
 inline void test_and_draw_combo(unsigned hit_level, GameScoreStat* stat, unsigned* max_combo) {
 	if(hit_level == 3 || hit_level == 2) {
-		stat->combo++;
 		if(*max_combo < stat->combo)
 			*max_combo = stat->combo;
 	} else {

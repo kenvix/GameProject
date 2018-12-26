@@ -17,7 +17,7 @@
 #define F_OK 0
 
 //玩家升级到LV1所需经验
-#define PLAYER_LV0_EXPERIENCE 100000
+#define PLAYER_LV0_EXPERIENCE 10000
 
 /**
  * 错误处理函数: 打印错误

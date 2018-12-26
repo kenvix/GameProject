@@ -66,14 +66,14 @@ inline int show_difficulty() {
 				}
 			}
 		}
-		if(difficulty >= -1)
+		if(difficulty > -1)
 			break;
 	}
 	putimage(193, 129, &cache);
 	return difficulty;
 }
 
-/*
+/**
 点击返回键 返回值为0
 点击第一关 返回值为1
 点击第二关 返回值为2
@@ -140,10 +140,15 @@ inline int show_map(std::vector<std::string> maps, int* difficulty) {
 	}
 	FlushMouseMsgBuffer();
 	flag_show_map_hover_status = -2;
-	int selected_difficulty = show_difficulty();
-	if(selected_difficulty == -1)
-		goto SELECT_MAP;
-	*difficulty = selected_difficulty;
+	if (conse != 0) {
+		int selected_difficulty = show_difficulty();
+		if (selected_difficulty == -1)
+			goto SELECT_MAP;
+		*difficulty = selected_difficulty;
+	}
+	else {
+		*difficulty = -1;
+	}
 	return conse;
 }
 #endif
