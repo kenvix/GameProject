@@ -102,4 +102,5 @@ inline int show_map(std::vector<std::string> maps) {
 	flag_show_map_hover_status = -2;
 	return conse;
 }
+
 #endif

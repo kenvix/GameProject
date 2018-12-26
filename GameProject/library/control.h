@@ -17,6 +17,7 @@
 #define SCORE_GOOD 15
 #define SCORE_BAD -10
 #define SCORE_MISS -30
+#define CHEAT true
 
 //条子起始位置
 #define STICK_INIT_POSITION 20
@@ -127,7 +128,7 @@ inline int get_stick_x_position(GameControl* control) {
 }
 
 /**
- * TODO: 绘制条子
+ * 绘制条子
  */
 inline void draw_game_stick(GameControl* control, IMAGE* image, IMAGE* cache) {
 	int y = control->position;
@@ -198,7 +199,7 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 	std::map<char, std::vector<GameControl*>>* accepting_keys = new std::map<char, std::vector<GameControl*>>();
 	std::unordered_map<GameControl*, IMAGE*>* images = new std::unordered_map<GameControl*, IMAGE*>();
 	std::map<char, GameControl*>* last_control = new std::map<char, GameControl*>();
-	std::unordered_map<GameControl*, IMAGE*>* old_images = new std::unordered_map<GameControl*, IMAGE*>;
+	std::unordered_map<GameControl*, IMAGE*>* old_images = new std::unordered_map<GameControl*, IMAGE*>();
 	images->reserve(4096);
 	old_images->reserve(4096);
 	//images.reserve(control->size() + 1);
@@ -209,6 +210,8 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 		(*accepting_keys)[game_key] = std::vector<GameControl*>();
 		(*last_control)[game_key] = nullptr;
 	}
+	bool cheat_mode = false;
+	int cheat_key = 0;
 	////////////////////////////
 	/*for(auto c : *control) {
 					IMAGE image;
@@ -267,14 +270,25 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 						old_images->erase(object);
 					} else {
 						draw_game_stick(object, (*images)[object], (*old_images)[object]);
+#ifdef CHEAT
+						if(cheat_mode && abs(time - object->time) < GRADE_PERFECT) {
+							cheat_key = object->key;
+						}
+#endif
 					}
 				}
 			}
 		}
 		sprintf_s(timer_buffer, 100, "Time: %8.3lf / %7.2lf", time, map->time);
 		drawtext(_T(timer_buffer), &timer_rect, DT_SINGLELINE);
-		if(_kbhit() != 0) {
-			int key = _getch();
+		if(_kbhit() != 0 || cheat_key != 0) {
+			int key;
+			if(cheat_key != 0) {
+				key = cheat_key;
+				cheat_key = 0;
+			} else {
+				key = _getch();
+			}
 			if(is_valid_key(key)) {
 				key = get_game_key(key);
 				if(!(*accepting_keys)[key].empty()) {
@@ -306,7 +320,12 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				}
 				putimage(193, 129, &cache);
 				music_play();
+			} 
+#ifdef CHEAT
+			else if(key == 8) { //响应作弊键
+				cheat_mode = cheat_mode ? false : true;
 			}
+#endif
 		}
 		sprintf_s(timer_buffer, 100, "Score: %6ld", stat->score);
 		drawtext(_T(timer_buffer), &score_rect, DT_SINGLELINE);
