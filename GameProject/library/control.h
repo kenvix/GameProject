@@ -258,8 +258,9 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 	for (double time = 0; time < map->time; time += STICK_STEP_TIME) {
 		unsigned control_size = control->size();
 		//校准时间到播放进度
-		//music_get_position(&music_position_string);
-		//double music_position = (double) atoi(music_position_string) / 1000;
+		music_get_position(&music_position_string);
+		double music_position = (double) atoi(music_position_string) / 1000;
+		time = music_position;
 		if(control_size > 0) {
 			GameControl* head_control = (*control)[control_size-1];
 			if(time >= (head_control->time - STICK_ADVANCE_TIME)) {
