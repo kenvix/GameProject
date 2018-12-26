@@ -32,7 +32,46 @@ inline void draw_map_selection_info(std::vector<std::string> maps, int key) {
 			drawtext(_T(cat("Difficulty: ", get_difficulty(info->difficulty))), &rect, DT_SINGLELINE);
 		}
 	}
-} 
+}
+
+inline int show_difficulty() {
+	IMAGE cache;
+	IMAGE pause;
+	getimage(&cache, 193, 129, 616, 310);
+	loadimage(&pause, "resource/image/difficulty.jpg", 616, 310, true);
+	putimage(193, 129, &pause);
+	int difficulty = -2;
+	while (true) {
+		const MOUSEMSG Mouse = GetMouseMsg();
+		if ((Mouse.x >= 9+193 && Mouse.x <= 195+193) && (Mouse.y >= 100+129 && Mouse.y < 251+129)) {
+			if (Mouse.mkLButton) {
+				difficulty = 0;
+			}
+		} else {
+			if ((Mouse.x > 195+193 && Mouse.x <= 383+193) && (Mouse.y >= 100+129 && Mouse.y < 251+129)) {
+				if (Mouse.mkLButton) {
+					difficulty = 1;
+				}
+			} else {
+				if ((Mouse.x > 383+193 && Mouse.x <= 616+193) && (Mouse.y >= 100+129 && Mouse.y < 251+129)) {
+					if (Mouse.mkLButton) {
+						difficulty = 2;
+					}
+				} else {
+					if ((Mouse.x > 383+193 && Mouse.x <= 616+193) && (Mouse.y >= 252+129 && Mouse.y < 303+129)) {
+						if (Mouse.mkLButton) {
+							difficulty = -1;
+						}
+					}
+				}
+			}
+		}
+		if(difficulty >= -1)
+			break;
+	}
+	putimage(193, 129, &cache);
+	return difficulty;
+}
 
 /*
 点击返回键 返回值为0
@@ -42,10 +81,11 @@ inline void draw_map_selection_info(std::vector<std::string> maps, int key) {
 点击第四关 返回值为4
 点击第五关 返回值为5
 */
-inline int show_map(std::vector<std::string> maps) {
+inline int show_map(std::vector<std::string> maps, int* difficulty) {
 	draw_map_common_info();
-	int conse = -1;
 	FlushMouseMsgBuffer();
+	SELECT_MAP:
+	int conse = -1;
 	while (true) {
 		const MOUSEMSG Mouse = GetMouseMsg();
 		if ((Mouse.x >= 939 && Mouse.x <= 1011) && (Mouse.y >= 547 && Mouse.y <= 600)) {
@@ -100,7 +140,10 @@ inline int show_map(std::vector<std::string> maps) {
 	}
 	FlushMouseMsgBuffer();
 	flag_show_map_hover_status = -2;
+	int selected_difficulty = show_difficulty();
+	if(selected_difficulty == -1)
+		goto SELECT_MAP;
+	*difficulty = selected_difficulty;
 	return conse;
 }
-
 #endif

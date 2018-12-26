@@ -4,17 +4,14 @@
 #include "../../library/control.h"
 #include "result.h"
 
-inline int show_game(GameMap* map) {
+inline int show_game(GameMap* map, int difficulty = 0) {
 	cleanup();
 	put_background("game-hard.jpg");
-	std::vector<GameControl*> controls = game_read_control(map);
-	GameRound* round = game_event_loop(map, &controls);
+	GameRound* round = game_event_loop(map, difficulty);
 	//TODO: 游戏结束评分界面
 	if(round == nullptr) {
 		return 0;
 	}
-	for (GameControl* control : controls)
-		free(control);
 	return show_result(round);
 }
 

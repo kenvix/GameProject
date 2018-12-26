@@ -17,7 +17,9 @@
 #define SCORE_GOOD 15
 #define SCORE_BAD -10
 #define SCORE_MISS -30
-#define CHEAT true
+
+//允许作弊模式
+#define CHEAT
 
 //条子起始位置
 #define STICK_INIT_POSITION 20
@@ -32,7 +34,9 @@
 #define STICK_HEIGHT 38
 
 const char game_valid_keys[] = {'A','S','D','J','K','L','a','s','d','j','k','l'};
-const char game_keys[] = {'a','s','d','j','k','l'};
+const char game_keys_hard[] = {'a','s','d','j','k','l'};
+const char game_keys_normal[] = {'a','s','k','l'};
+const char game_keys_easy[] = {'a','l'};
 
 inline bool is_valid_key(int key) {
 	for (char valid_key : game_valid_keys) {
@@ -42,7 +46,14 @@ inline bool is_valid_key(int key) {
 	return false;
 }
 
-inline std::vector<GameControl*> game_read_control(GameMap* map, unsigned* num = nullptr) {
+inline void get_game_difficulty_key(int difficulty, unsigned* game_key_num, char** game_keys_v) {
+	*game_key_num = difficulty == 0 ? 2 : difficulty == 1 ? 4 : 6;
+	char* game_keys = (char*) calloc(*game_key_num, sizeof(char));
+	memcpy_s(game_keys, 6, difficulty == 0 ? game_keys_easy : difficulty == 1 ? game_keys_normal : game_keys_hard, 6);
+	*game_keys_v = game_keys;
+}
+
+inline std::vector<GameControl*> game_read_control(GameMap* map, int difficulty, unsigned* num = nullptr) {
 	FILE* fs;
 	errno = fopen_s(&fs, cat(cat("resource/map/", map->path),"/control.txt"), "r");
 	if(errno != 0)
@@ -50,6 +61,9 @@ inline std::vector<GameControl*> game_read_control(GameMap* map, unsigned* num =
 	fseek(fs, 0L, SEEK_END);
 	unsigned size = ftell(fs);
 	fseek(fs, 0L, SEEK_SET);
+	unsigned game_key_num;
+	char* game_keys = nullptr;
+	get_game_difficulty_key(difficulty, &game_key_num, &game_keys);
 	std::vector<GameControl*> result;
 	result.reserve(4096);
 	unsigned i = 0;
@@ -59,12 +73,16 @@ inline std::vector<GameControl*> game_read_control(GameMap* map, unsigned* num =
 		char key;
 		fscanf_s(fs, "%d:%lf %c\n", &minute, &second, &key);
 		if(minute != -1) {
-			GameControl* control = (GameControl*) calloc(1, sizeof(GameControl));
-			control->key = key;
-			control->time = (double) minute * 60 + second;
-			control->position = -1;
-			control->image = nullptr;
-			result.insert(result.begin(), control);
+			for (unsigned ik = 0; ik < game_key_num; ik++) {
+				if(game_keys[ik] == key) {
+					GameControl* control = (GameControl*) calloc(1, sizeof(GameControl));
+					control->key = key;
+					control->time = (double) minute * 60 + second;
+					control->position = -1;
+					control->image = nullptr;
+					result.insert(result.begin(), control);
+				}
+			}
 		}
 	}
 	if(num != nullptr)
@@ -192,8 +210,11 @@ inline void test_and_draw_combo(unsigned hit_level, GameScoreStat* stat, unsigne
  * 游戏事件循环
  * @param map 地图对象
  * @param control 控制向量
+ * @param difficulty 期望的难度
  */
-inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* control) {
+inline GameRound* game_event_loop(GameMap* map, int difficulty) {
+	std::vector<GameControl*> control_raw = game_read_control(map, difficulty);
+	std::vector<GameControl*>* control = &control_raw;
 	GameRound* round = (GameRound*) calloc(1, sizeof(GameRound));
 	GameScoreStat* stat = (GameScoreStat*) calloc(1, sizeof(GameScoreStat));
 	std::map<char, std::vector<GameControl*>>* accepting_keys = new std::map<char, std::vector<GameControl*>>();
@@ -202,11 +223,15 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 	std::unordered_map<GameControl*, IMAGE*>* old_images = new std::unordered_map<GameControl*, IMAGE*>();
 	images->reserve(4096);
 	old_images->reserve(4096);
+	unsigned game_key_num;
+	char* game_keys = nullptr;
+	get_game_difficulty_key(difficulty, &game_key_num, &game_keys);
 	//images.reserve(control->size() + 1);
 	//old_images.reserve(control->size() + 1);
 	unsigned max_combo = 0;
 	unsigned combo = 0;
-	for (const char game_key : game_keys) {
+	for (unsigned i = 0; i < game_key_num/sizeof(char); i++) {
+		const char game_key = game_keys[i];
 		(*accepting_keys)[game_key] = std::vector<GameControl*>();
 		(*last_control)[game_key] = nullptr;
 	}
@@ -252,7 +277,8 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 				(*last_control)[head_control->key] = head_control;
 			}
 		}
-		for (const char game_key : game_keys) {
+		for (unsigned ik = 0; ik < game_key_num; ik++) {
+			const char game_key = game_keys[ik];
 			std::vector<GameControl*>* querying_accepting_keys = &(*accepting_keys)[game_key];
 			if(!querying_accepting_keys->empty()) {
 				for(GameControl* object : *querying_accepting_keys) {
@@ -337,6 +363,8 @@ inline GameRound* game_event_loop(GameMap* map, std::vector<GameControl*>* contr
 	round->score = stat->score < 0 ? 0 : stat->score;
 	free(music_position_string);
 	free(timer_buffer);
+	for (GameControl* control_v : *control)
+		free(control_v);
 	return round;
 }
 #endif

@@ -44,14 +44,16 @@ int main(int argc, char* argv[]) {
 	switch (selection) {
 		case 1:
 			MAP_NODE:
-			selected_map = show_map(maps);
+			int difficulty;
+			selected_map = show_map(maps, &difficulty);
 			if(selected_map == 0) {
 				goto INDEX_NODE;
 			} else {
-				if(show_game(get_map_info(maps[selected_map-1].c_str())) == 1) {
+				if (show_game(get_map_info(maps[selected_map - 1].c_str()), difficulty) == 1) {
 					show_record();
 					goto INDEX_NODE;
-				} else {
+				}
+				else {
 					goto MAP_NODE;
 				}
 			}
