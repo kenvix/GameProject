@@ -19,6 +19,14 @@
 //玩家升级到LV1所需经验
 #define PLAYER_LV0_EXPERIENCE 10000
 
+extern GamePlayer* player;
+extern GameRound* rounds_basic;
+extern unsigned rounds_num;
+
+extern FILE* file_player;
+extern FILE* file_rounds_basic;
+extern FILE* file_rounds_index;
+
 /**
  * 错误处理函数: 打印错误
  * @param errors 错误列表，需用大括号括起来
@@ -98,16 +106,17 @@ inline bool db_init(const char* path, FILE** target) {
 	return is_exist;
 }
 
-inline void db_write_rounds(FILE* file, FILE* index, GameRound* data, unsigned num) {
-	fseek(file, 0L, SEEK_SET);
-	fseek(index, 0L, SEEK_SET);
-	fwrite(data, sizeof(GameRound), num, file);
-	fprintf_s(index, "%d\n", num);
-	for (unsigned i = 0; i < num; i++) {
-		fwrite(data[i].map, data[i].map_length, 1, index);
+inline void db_write_rounds() {
+	fseek(file_rounds_basic, 0L, SEEK_SET);
+	fseek(file_rounds_index, 0L, SEEK_SET);
+	fwrite(rounds_basic, sizeof(GameRound), rounds_num, file_rounds_basic);
+	fprintf_s(file_rounds_index, "%d\n", rounds_num);
+	for (unsigned i = 0; i < rounds_num; i++) {
+		printf_s("Writing record: %s: %d\n", rounds_basic[i].map, rounds_basic[i].score);
+		fwrite(rounds_basic[i].map, rounds_basic[i].map_length, 1, file_rounds_index);
 	}
-	fflush(file);
-	fflush(index);
+	fflush(file_rounds_basic);
+	fflush(file_rounds_index);
 }
 
 inline void db_write_player(FILE* file, GamePlayer* player) {
@@ -135,16 +144,16 @@ inline GameRound* db_read_round(FILE* file, FILE* index, unsigned* _num) {
 	return buffer;
 }
 
-inline bool db_insert_round(GameRound** source, unsigned* num, GameRound* data) {
-	GameRound* new_ptr = (GameRound*) realloc(*source, sizeof(*source) + sizeof(GameRound) * sizeof(data));
+inline bool db_insert_round(GameRound** source, unsigned* num, GameRound data) {
+	GameRound* new_ptr = (GameRound*) realloc(*source, sizeof(GameRound) * (*num+1));
 	if(new_ptr != NULL) {
 		*source = new_ptr;
-		(*source)[*num].max_combo = data->max_combo;
-		(*source)[*num].level = data->level;
-		(*source)[*num].map = data->map;
-		(*source)[*num].map_length = data->map_length;
-		(*source)[*num].score = data->score;
-		(*source)[*num].time = data->time;
+		(*source)[*num].max_combo = data.max_combo;
+		(*source)[*num].level = data.level;
+		(*source)[*num].map = data.map;
+		(*source)[*num].map_length = data.map_length;
+		(*source)[*num].score = data.score;
+		(*source)[*num].time = data.time;
 		(*num)++;
 		return true;
 	} else {

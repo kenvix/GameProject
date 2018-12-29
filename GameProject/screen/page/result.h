@@ -24,8 +24,9 @@ inline void apply_game_result(GameRound* round) {
 			player->level++;
 	}
 	db_write_player(file_player, player);
-	db_insert_round(&rounds_basic, &rounds_num, round);
-	db_write_rounds(file_rounds_basic, file_rounds_index, round, rounds_num);
+	db_insert_round(&rounds_basic, &rounds_num, *round);
+	printf_s("New record: %s: %d\n", rounds_basic[rounds_num-1].map, rounds_basic[rounds_num-1].score);
+	db_write_rounds();
 }
 
 inline int show_result(GameRound* round) {
