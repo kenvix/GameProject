@@ -24,7 +24,8 @@ inline void apply_game_result(GameRound* round) {
 			player->level++;
 	}
 	db_write_player(file_player, player);
-	//db_write_rounds(file_rounds_basic, file_rounds_index, round, )
+	db_insert_round(&rounds_basic, &rounds_num, round);
+	db_write_rounds(file_rounds_basic, file_rounds_index, round, rounds_num);
 }
 
 inline int show_result(GameRound* round) {

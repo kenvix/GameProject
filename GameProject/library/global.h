@@ -21,7 +21,7 @@ typedef struct {
 typedef struct {
 	unsigned int max_combo; //这局最大连击次数
 	unsigned int score; //这局得分
-	unsigned int time; //何时开始的游戏（UNIX TIMESTAMP）
+	time_t time; //何时开始的游戏（UNIX TIMESTAMP）
 	unsigned short level; //等级评定 S=0 A=1 B=2 C=3 D=4
 	char* map; //Map Internal Path
 	unsigned int map_length;

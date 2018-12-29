@@ -135,6 +135,25 @@ inline GameRound* db_read_round(FILE* file, FILE* index, unsigned* _num) {
 	return buffer;
 }
 
+inline bool db_insert_round(GameRound** source, unsigned* num, GameRound* data) {
+	GameRound* new_ptr = (GameRound*) realloc(*source, sizeof(*source) + sizeof(GameRound) * sizeof(data));
+	if(new_ptr != NULL) {
+		*source = new_ptr;
+		(*source)[*num].max_combo = data->max_combo;
+		(*source)[*num].level = data->level;
+		(*source)[*num].map = data->map;
+		(*source)[*num].map_length = data->map_length;
+		(*source)[*num].score = data->score;
+		(*source)[*num].time = data->time;
+		(*num)++;
+		return true;
+	} else {
+		return false;
+	}
+	(*num)++;
+	return true;
+}
+
 inline GamePlayer* db_read_player(FILE* file) {
 	GamePlayer* buffer = (GamePlayer*) calloc(1, sizeof(GamePlayer));
 	fread_s(buffer, sizeof(GamePlayer), sizeof(GamePlayer), 1, file);

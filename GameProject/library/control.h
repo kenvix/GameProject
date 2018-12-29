@@ -8,6 +8,7 @@
 #include <set>
 #include <map>
 #include <unordered_map>
+#include <ctime>
 
 #define GRADE_PERFECT 0.2
 #define GRADE_GOOD 0.3
@@ -215,6 +216,9 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 	std::vector<GameControl*> control_raw = game_read_control(map, difficulty);
 	std::vector<GameControl*>* control = &control_raw;
 	GameRound* round = (GameRound*) calloc(1, sizeof(GameRound));
+	round->map = map->path;
+	round->map_length = strlen(map->path);
+	round->time = std::time(nullptr);
 	GameScoreStat* stat = (GameScoreStat*) calloc(1, sizeof(GameScoreStat));
 	std::map<char, std::vector<GameControl*>>* accepting_keys = new std::map<char, std::vector<GameControl*>>();
 	std::unordered_map<GameControl*, IMAGE*>* images = new std::unordered_map<GameControl*, IMAGE*>();
