@@ -58,7 +58,7 @@ inline std::vector<GameControl*> game_read_control(GameMap* map, int difficulty,
 	FILE* fs;
 	errno = fopen_s(&fs, cat(cat("resource/map/", map->path),"/control.txt"), "r");
 	if(errno != 0)
-		bullshit({"Failed to read control: file error ", std::to_string(errno).c_str()});
+		print_error({"Failed to read control: file error ", std::to_string(errno).c_str()});
 	fseek(fs, 0L, SEEK_END);
 	unsigned size = ftell(fs);
 	fseek(fs, 0L, SEEK_SET);

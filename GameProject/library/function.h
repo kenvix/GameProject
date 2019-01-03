@@ -32,7 +32,7 @@ extern FILE* file_rounds_index;
  * @param errors 错误列表，需用大括号括起来
  */
 template <typename T>
-inline void bullshit(std::initializer_list<T> errors) {
+inline void print_error(std::initializer_list<T> errors) {
 	std::cerr << "----------------------Error Occured------------------------" << std::endl;
 	for(T err : errors)
 		std::cerr << err << std::endl;
@@ -100,7 +100,7 @@ inline bool db_init(const char* path, FILE** target) {
 	}
 	if(err) {
 		errno = err;
-		bullshit({"Failed to open database file: ", path, std::to_string(errno).c_str()});
+		print_error({"Failed to open database file: ", path, std::to_string(errno).c_str()});
 	}
 	*target = stream;
 	return is_exist;
@@ -204,7 +204,7 @@ inline GameMap* get_map_info(const char* path) {
 	const char* file_path = cat(cat("resource/map/", path), "/info.txt");
 	errno = fopen_s(&file, file_path, "r");
 	if(errno)
-		bullshit({"Failed to open map info file: ", file_path, std::to_string(errno).c_str()});
+		print_error({"Failed to open map info file: ", file_path, std::to_string(errno).c_str()});
 	GameMap* data = (GameMap*) calloc(1, sizeof(GameMap));
 	data->name = (char*) calloc(50, sizeof(char));
 	data->description = (char*) calloc(100, sizeof(char));
@@ -292,17 +292,17 @@ inline char get_game_key(char key) {
 	return '\0';
 }
 
-inline void get_level_description(unsigned level, char** target) {
+inline void get_level_description(unsigned int level, char** target) {
 	switch (level) {
-		case 3:
+		case Perfect:
 			*target = (char*) "Perfect";
 			break;
 		
-		case 2:
+		case Good:
 			*target = (char*) "Good";
 			break;
 
-		case 1:
+		case Bad:
 			*target = (char*) "Bad";
 			break;
 

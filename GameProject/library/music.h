@@ -10,7 +10,7 @@
 #pragma comment(lib, "winmm.lib")
 
 inline void music_error(const char* message, MCIERROR error) {
-	bullshit({"MCIERROR: ", message, std::to_string(error).c_str()});
+	print_error({"MCIERROR: ", message, std::to_string(error).c_str()});
 }
 
 inline MCIERROR music_init(const char* path, const char* folder = "music") {

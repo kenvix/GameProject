@@ -4,6 +4,16 @@
 #include <easyx.h>
 
 /**
+ * 击打等级
+ */
+typedef enum {
+	Miss,
+	Bad,
+	Good,
+	Perfect
+} HitLevel;
+
+/**
  * 玩家
  */
 typedef struct {
