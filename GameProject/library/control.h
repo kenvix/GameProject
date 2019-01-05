@@ -369,6 +369,7 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 	free(timer_buffer);
 	for (GameControl* control_v : *control)
 		free(control_v);
+	music_stop();
 	return round;
 }
 #endif
