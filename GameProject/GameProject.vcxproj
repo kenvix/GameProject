@@ -92,6 +92,18 @@ exit 0</Command>
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
     </ClCompile>
+    <PreBuildEvent>
+      <Command>echo Before Build
+del /f /s /q "$(OutputPath)"
+rd /s /q "$(OutputPath)"
+del /f /s /q "$(ProjectDir)Debug"
+exit %ERRORLEVEL%</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>mklink /D "$(OutputPath)resource" "$(ProjectDir)resource"
+mklink /D "$(OutputPath)data" "$(ProjectDir)data"
+exit %ERRORLEVEL%</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -127,6 +139,18 @@ exit 0</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PreBuildEvent>
+      <Command>echo Before Build
+del /f /s /q "$(OutputPath)"
+rd /s /q "$(OutputPath)"
+del /f /s /q "$(ProjectDir)Debug"
+exit %ERRORLEVEL%</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>mklink /D "$(OutputPath)resource" "$(ProjectDir)resource"
+mklink /D "$(OutputPath)data" "$(ProjectDir)data"
+exit %ERRORLEVEL%</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

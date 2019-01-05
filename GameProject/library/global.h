@@ -21,7 +21,7 @@ typedef struct {
 	unsigned int name_length;
 	unsigned long long experience;
 	unsigned int level;
-	unsigned int max_combo; //这辈子的最大连击次数
+	unsigned int max_combo; //最大连击次数
 	unsigned int max_score; //单局游戏最大得分
 } GamePlayer;
 

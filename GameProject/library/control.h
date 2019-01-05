@@ -269,7 +269,7 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 			if(time >= (head_control->time - STICK_ADVANCE_TIME)) {
 				control->pop_back();
 				std::vector<GameControl*>* target = &(*accepting_keys)[head_control->key];
-				if((*last_control)[head_control->key] == nullptr || time - ( (*last_control)[head_control->key]->time - STICK_ADVANCE_TIME ) > 0.34) {
+				if((*last_control)[head_control->key] == nullptr || time - ( (*last_control)[head_control->key]->time - STICK_ADVANCE_TIME ) > 0.38) {
 					IMAGE* image = new IMAGE();
 					IMAGE* cache = new IMAGE();
 					draw_game_stick(head_control, image, cache);
