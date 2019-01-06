@@ -52,8 +52,7 @@ int main(int argc, char* argv[]) {
 				if (show_game(get_map_info(maps[selected_map - 1].c_str()), difficulty) == 1) {
 					show_record();
 					goto INDEX_NODE;
-				}
-				else {
+				} else {
 					goto MAP_NODE;
 				}
 			}
@@ -61,6 +60,11 @@ int main(int argc, char* argv[]) {
 
 		case 2:
 			show_record();
+			goto INDEX_NODE;
+			break;
+
+		case 3:
+			show_help();
 			goto INDEX_NODE;
 			break;
 	}

@@ -10,7 +10,13 @@ inline int show_index() {
 	int result;
 	while (true) {
 		const MOUSEMSG Mouse = GetMouseMsg();//获取一个鼠标的信息
-		if (((Mouse.x >= 323 && Mouse.x <= 515) && (Mouse.y >= 372 && Mouse.y <= 562)) || ((Mouse.x >= 668 && Mouse.x <= 860) && (Mouse.y >= 372 && Mouse.y <= 562))) {
+		if ((Mouse.x >= 31 && Mouse.x <= 107) && (Mouse.y >= 49 && Mouse.y <= 117)) {
+			if (Mouse.mkLButton) {
+				result = 3;
+				break;
+			}
+			//判断是否点击 help
+		} else if (((Mouse.x >= 323 && Mouse.x <= 515) && (Mouse.y >= 372 && Mouse.y <= 562)) || ((Mouse.x >= 668 && Mouse.x <= 860) && (Mouse.y >= 372 && Mouse.y <= 562))) {
 			if (Mouse.mkLButton) {
 				result = 1;
 				break;
@@ -26,6 +32,17 @@ inline int show_index() {
 	}
 	FlushMouseMsgBuffer();//消除鼠标信息
 	return result;
+}
+
+inline void show_help() {
+	put_background("help.jpg", 91, 77);
+	FlushMouseMsgBuffer();
+	while (true) {
+		const MOUSEMSG Mouse = GetMouseMsg();//获取一个鼠标的信息
+		if (Mouse.mkLButton)
+			break;
+	}
+	FlushMouseMsgBuffer();//消除鼠标信息
 }
 
 #endif

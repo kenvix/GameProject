@@ -206,6 +206,17 @@ inline void test_and_draw_combo(unsigned hit_level, GameScoreStat* stat, unsigne
 	drawtext(_T(result), &combo_rect, DT_SINGLELINE);
 }
 
+inline char* prepare_wave(LPCTSTR path) {
+	FILE* file;
+	fopen_s(&file, path, "r");
+	fseek(file, 0L, SEEK_END);
+	const long size = ftell(file);
+	fseek(file, 0L, SEEK_SET);
+	char* buffer = (char*) calloc(1, size);
+	fread_s(buffer, size, size, 1, file);
+	return buffer;
+}
+
 /**
  * 游戏事件循环
  * @param map 地图对象
@@ -228,6 +239,7 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 	old_images->reserve(4096);
 	unsigned game_key_num;
 	char* game_keys = nullptr;
+	char* sound_buffer = prepare_wave("resource/music/hit.wav");
 	get_game_difficulty_key(difficulty, &game_key_num, &game_keys);
 	//images.reserve(control->size() + 1);
 	//old_images.reserve(control->size() + 1);
@@ -301,7 +313,7 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 					} else {
 						draw_game_stick(object, (*images)[object], (*old_images)[object]);
 #ifdef CHEAT
-						if(cheat_mode && abs(time - object->time) < GRADE_PERFECT) {
+						if(cheat_mode && abs(time - object->time) < (GRADE_PERFECT + GRADE_GOOD)/2) {
 							cheat_key = object->key;
 						}
 #endif
@@ -329,6 +341,7 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 						(*accepting_keys)[key].pop_back();
 						hide_game_stick(current_control, (*old_images)[current_control]);
 						//TODO: Play efforts for bad/good/perfect
+						PlaySound(sound_buffer, NULL, SND_MEMORY|SND_ASYNC);
 						draw_hit_result(current_control, hit_level);
 						delete (*images)[current_control];
 						delete (*old_images)[current_control];

@@ -38,10 +38,10 @@ inline RECT* get_rect() {
 /**
  * 初始化预设背景图
  */
-inline IMAGE put_background(const char* path) {
+inline IMAGE put_background(const char* path, int x = 0, int y = 0) {
 	IMAGE background;
 	loadimage(&background, cat("resource/background/", path));
-	putimage(0, 0, &background);
+	putimage(x, y, &background);
 	return background;
 }
 
