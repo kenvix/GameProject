@@ -6,7 +6,7 @@
 
 inline int show_game(GameMap* map, int difficulty = 0) {
 	cleanup();
-	put_background("game-hard.jpg");
+	put_background("loading.jpg");
 	GameRound* round = game_event_loop(map, difficulty);
 	//TODO: 游戏结束评分界面
 	if(round == nullptr) {

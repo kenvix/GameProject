@@ -14,16 +14,36 @@ extern GameRound* rounds_basic;
 extern unsigned rounds_num;
 
 /**
+ * 初始化预设背景图
+ */
+inline IMAGE put_background(const char* path, int x = 0, int y = 0) {
+	IMAGE background;
+	loadimage(&background, cat("resource/background/", path));
+	putimage(x, y, &background);
+	setbkmode(TRANSPARENT);
+	return background;
+}
+
+/**
  * 创建窗体
  */
 inline HWND create_window() {
 	printf("Initializing graph %dx%d\n", WINDOW_WIDTH, WINDOW_HEIGHT);
 #ifdef _DEBUG
 		HWND window = initgraph(WINDOW_WIDTH, WINDOW_HEIGHT, SHOWCONSOLE);
+	    SetWindowText(window, cat(WINDOW_TITLE, " [Debug+Cheat]"));
 #else 
 		HWND window = initgraph(WINDOW_WIDTH, WINDOW_HEIGHT, NULL);
+		SetWindowText(window, WINDOW_TITLE);
 #endif
-	SetWindowText(window, WINDOW_TITLE);
+	RECT r = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+
+	if(dir_exists("resource/background")) {
+		drawtext(_T("Loading resources ... (Check the accessibility of resources if there is no response)"), &r, DT_SINGLELINE);
+	} else {
+		drawtext(_T("Unable to load kComposer: resources not found."), &r, DT_SINGLELINE);
+	}
+	put_background("loading.jpg");
 	return window;
 }
 
@@ -33,16 +53,6 @@ inline HWND create_window() {
 inline RECT* get_rect() {
 	RECT r = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 	return &r;
-}
-
-/**
- * 初始化预设背景图
- */
-inline IMAGE put_background(const char* path, int x = 0, int y = 0) {
-	IMAGE background;
-	loadimage(&background, cat("resource/background/", path));
-	putimage(x, y, &background);
-	return background;
 }
 
 /**

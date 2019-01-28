@@ -97,7 +97,8 @@ exit 0</Command>
 del /f /s /q "$(OutputPath)"
 rd /s /q "$(OutputPath)"
 del /f /s /q "$(ProjectDir)Debug"
-exit %ERRORLEVEL%</Command>
+del /f /s /q "$(ProjectDir)Release"
+exit 0</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>mklink /D "$(OutputPath)resource" "$(ProjectDir)resource"
@@ -144,7 +145,8 @@ exit 0</Command>
 del /f /s /q "$(OutputPath)"
 rd /s /q "$(OutputPath)"
 del /f /s /q "$(ProjectDir)Debug"
-exit %ERRORLEVEL%</Command>
+del /f /s /q "$(ProjectDir)Release"
+exit 0</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>mklink /D "$(OutputPath)resource" "$(ProjectDir)resource"

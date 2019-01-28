@@ -14,6 +14,7 @@ inline void show_record() {
 	cleanup();
 	put_background("record.jpg");
 	draw_player_info();
+	setcolor(BLACK);
 	int role;
 	char* strbuffer = (char*)calloc(133, sizeof(char));
 	auto tm = (struct tm*) malloc(sizeof(struct tm));
@@ -32,7 +33,7 @@ inline void show_record() {
 	rect = { 740,15,WINDOW_WIDTH,WINDOW_HEIGHT };
 	drawtext(_T("Experience"), &rect, DT_SINGLELINE);
 	rect = { 740,35,WINDOW_WIDTH,WINDOW_HEIGHT };
-	sprintf_s(strbuffer, 133, "%6u", player->experience);
+	sprintf_s(strbuffer, 133, "%6llu", player->experience);
 	drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
 
 	if(rounds_num >= 1) {
@@ -41,7 +42,7 @@ inline void show_record() {
 		rect = { 183,124,WINDOW_WIDTH,WINDOW_HEIGHT };
 		drawtext(_T(mapinfo->name), &rect, DT_SINGLELINE);
 		rect = { 326,124,WINDOW_WIDTH,WINDOW_HEIGHT };
-		drawtext(_T(mapinfo->description), &rect, DT_SINGLELINE);
+		//drawtext(_T(mapinfo->description), &rect, DT_SINGLELINE);
 		rect = { 430,124,WINDOW_WIDTH,WINDOW_HEIGHT };
 		sprintf_s(strbuffer, 133, "%6u", current_round.max_combo);
 		drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
@@ -60,7 +61,7 @@ inline void show_record() {
 		rect = { 183,229,WINDOW_WIDTH,WINDOW_HEIGHT };
 		drawtext(_T(mapinfo->name), &rect, DT_SINGLELINE);
 		rect = { 326,124,WINDOW_WIDTH,WINDOW_HEIGHT };
-		drawtext(_T(mapinfo->description), &rect, DT_SINGLELINE);
+		//drawtext(_T(mapinfo->description), &rect, DT_SINGLELINE);
 		rect = { 430,229,WINDOW_WIDTH,WINDOW_HEIGHT };
 		sprintf_s(strbuffer, 133, "%6u", current_round.max_combo);
 		drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
@@ -79,11 +80,11 @@ inline void show_record() {
 		rect = { 183,341,WINDOW_WIDTH,WINDOW_HEIGHT };
 		drawtext(_T(mapinfo->name), &rect, DT_SINGLELINE);
 		rect = { 326 ,341,WINDOW_WIDTH,WINDOW_HEIGHT };
-		drawtext(_T(mapinfo->description), &rect, DT_SINGLELINE);
-		rect = { 395,341,WINDOW_WIDTH,WINDOW_HEIGHT };
+		//drawtext(_T(mapinfo->description), &rect, DT_SINGLELINE);
+		rect = { 430,341,WINDOW_WIDTH,WINDOW_HEIGHT };
 		sprintf_s(strbuffer, 133, "%6u", current_round.max_combo);
 		drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
-		rect = { 500,341,WINDOW_WIDTH,WINDOW_HEIGHT };
+		rect = { 540,341,WINDOW_WIDTH,WINDOW_HEIGHT };
 		sprintf_s(strbuffer, 133, "%6u", current_round.score);
 		drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
 		rect = { 653,341,WINDOW_WIDTH,WINDOW_HEIGHT };
@@ -98,11 +99,11 @@ inline void show_record() {
 		rect = { 183,448,WINDOW_WIDTH,WINDOW_HEIGHT };
 		drawtext(_T(mapinfo->name), &rect, DT_SINGLELINE);
 		rect = { 286,448,WINDOW_WIDTH,WINDOW_HEIGHT };
-		drawtext(_T(mapinfo->description), &rect, DT_SINGLELINE);
-		rect = { 395 ,448,WINDOW_WIDTH,WINDOW_HEIGHT };
+		//drawtext(_T(mapinfo->description), &rect, DT_SINGLELINE);
+		rect = { 430 ,448,WINDOW_WIDTH,WINDOW_HEIGHT };
 		sprintf_s(strbuffer, 133, "%6u", current_round.max_combo);
 		drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
-		rect = { 500,448,WINDOW_WIDTH,WINDOW_HEIGHT };
+		rect = { 540,448,WINDOW_WIDTH,WINDOW_HEIGHT };
 		sprintf_s(strbuffer, 133, "%6u", current_round.score);
 		drawtext(_T(strbuffer), &rect, DT_SINGLELINE);
 		rect = { 653,448,WINDOW_WIDTH,WINDOW_HEIGHT };
@@ -130,6 +131,7 @@ inline void show_record() {
 	free(tm);
 	free(strbuffer);
 	FlushMouseMsgBuffer();
+	setcolor(WHITE);
 }
 
 inline void show_rename() {

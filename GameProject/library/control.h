@@ -27,7 +27,7 @@
 //条子步进长度
 #define STICK_STEP_LENGTH 5.9
 //条子提前绘制时间
-#define STICK_ADVANCE_TIME 0.87
+#define STICK_ADVANCE_TIME 0.85
 //条子步进时间
 #define STICK_STEP_TIME 0.014L 
 
@@ -251,6 +251,7 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 		(*last_control)[game_key] = nullptr;
 	}
 	bool cheat_mode = false;
+	bool cheat_mode_actived = false;
 	int cheat_key = 0;
 	////////////////////////////
 	/*for(auto c : *control) {
@@ -262,6 +263,8 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 	/////////////////////////////
 	char* music_position_string = (char*) calloc(128, sizeof(char));
 	game_play_music(map);
+	put_background("game-hard.jpg");
+	setbkmode(OPAQUE);
 	//ready to start timer
 	RECT common_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 40, WINDOW_WIDTH, WINDOW_HEIGHT};
 	RECT timer_rect = {WINDOW_WIDTH - 230, WINDOW_HEIGHT - 20, WINDOW_WIDTH, WINDOW_HEIGHT};
@@ -313,7 +316,7 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 					} else {
 						draw_game_stick(object, (*images)[object], (*old_images)[object]);
 #ifdef CHEAT
-						if(cheat_mode && abs(time - object->time) < (GRADE_PERFECT + GRADE_GOOD)/2) {
+						if(cheat_mode && abs(time - object->time) < GRADE_PERFECT) {
 							cheat_key = object->key;
 						}
 #endif
@@ -359,6 +362,7 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 				putimage(193, 129, &pause);
 				const char pause_key = _getch();
 				if(pause_key == 'E' || pause_key == 'e') {
+					music_stop();
 					return nullptr;
 				}
 				putimage(193, 129, &cache);
@@ -367,6 +371,7 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 #ifdef CHEAT
 			else if(key == 8) { //响应作弊键
 				cheat_mode = cheat_mode ? false : true;
+				cheat_mode_actived = true;
 			}
 #endif
 		}
@@ -377,7 +382,12 @@ inline GameRound* game_event_loop(GameMap* map, int difficulty) {
 		Sleep(STICK_STEP_TIME * 1000);
  	}
 	round->max_combo = max_combo;
-	round->score = stat->score < 0 ? 0 : stat->score;
+#ifndef _DEBUG
+	if(cheat_mode_actived)
+		round->score = 0;
+	else
+#endif
+		round->score = stat->score < 0 ? 0 : stat->score;
 	free(music_position_string);
 	free(timer_buffer);
 	for (GameControl* control_v : *control)
